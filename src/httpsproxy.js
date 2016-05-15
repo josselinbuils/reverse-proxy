@@ -43,11 +43,8 @@ module.exports = class HTTPSProxy {
         app.use((req, res, next) => {
 
             if (!/^www\./.test(req.hostname) && req.hostname.split('.').length === 2) {
-                let acmePrefixIndex = req.url.indexOf('.well-known'),
-                    url = acmePrefixIndex !== -1 ? req.url.slice(0, acmePrefixIndex) : req.url;
-
-                Logger.info('Redirect to https://www.' + req.hostname + url);
-                return res.redirect('https://www.' + req.hostname + url);
+                Logger.info('Redirect to https://www.' + req.hostname + req.url);
+                return res.redirect('https://www.' + req.hostname + req.url);
             }
 
             next();
