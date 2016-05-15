@@ -10,7 +10,7 @@ let proxy;
 module.exports = class Router {
 
     static init() {
-        Logger.error(`Initialize router`);
+        Logger.info(`Initialize router`);
         proxy = httpProxy.createProxyServer({});
     }
 
