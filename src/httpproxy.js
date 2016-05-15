@@ -16,11 +16,11 @@ module.exports = class HTTPProxy {
 
         app.use(helmet());
 
-        app.all('*', (req, res) => {
+        app.use((req, res, next) => {
 
-            if (!/^www/.test(req.hostname) && req.hostname.split('.').length === 2) {
+            if (!/^www\./.test(req.hostname) && req.hostname.split('.').length === 2) {
                 Logger.info(`Add www subdomain to ${req.hostname}`);
-                return res.redirect(req.protocol + '://www.' + req.hostname + req.url);
+                return res.redirect('http://www.' + req.hostname + req.url);
             }
 
             if (HTTPSProxy.isHTTPSDomain(req.hostname)) {
@@ -28,8 +28,10 @@ module.exports = class HTTPProxy {
                 return res.redirect('https://' + req.hostname + req.url);
             }
 
-            Router.route(req, res);
+            next();
         });
+
+        app.use(Router.route);
 
         app.listen(80);
 

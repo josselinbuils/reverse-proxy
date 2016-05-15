@@ -40,9 +40,24 @@ module.exports = class HTTPSProxy {
 
         app.use(helmet());
 
-        app.all('*', Router.route);
+        app.use((req, res, next) => {
 
-        https.createServer(lex.httpsOptions, LEX.createAcmeResponder(lex, app)).listen(443);
+            if (!/^www\./.test(req.hostname) && req.hostname.split('.').length === 2) {
+                Logger.info(`Add www subdomain to ${req.hostname}`);
+                return res.redirect('https://www.' + req.hostname + req.url);
+            }
+
+            if (!HTTPSProxy.isHTTPSDomain(req.hostname)) {
+                Logger.info(`${req.hostname} is not a HTTPS domain, use HTTP instead`);
+                return res.redirect('http://' + req.hostname + req.url);
+            }
+
+            next();
+        });
+
+        app.use(LEX.createAcmeResponder(lex, Router.route));
+
+        app.listen(443);
 
         Logger.info('ReverseProxy is listening on port 443 for HTTPS protocol');
     }
