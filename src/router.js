@@ -16,17 +16,18 @@ module.exports = class Router {
 
     static route(req, res) {
 
-        let matchingRoute;
+        let matchingRoute,
+            reqHostname = /^www\./.test(req.hostname) ? req.hostname.slice(4) : req.hostname;
 
         for (let i = 0; i < config.map.length && !matchingRoute; i++) {
 
             let route = config.map[i];
 
             for (let j = 0; j < route.hosts.length; j++) {
-                let splitHost = route.hosts[j].split('/');
-                let hostname = splitHost[0];
 
-                let match = hostname === req.hostname;
+                let splitHost = route.hosts[j].split('/'),
+                    hostname = splitHost[0],
+                    match = hostname === reqHostname;
 
                 if (splitHost.length > 1) {
                     let escapedPath = splitHost[1].replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");

@@ -11,8 +11,8 @@ const Router = require('./router');
 
 module.exports = class HTTPSProxy {
 
-    static isHTTPSDomain(domain) {
-        return config.httpsDomains.indexOf(domain) !== -1;
+    static isHTTPSDomain(hostname) {
+        return config.httpsHosts.indexOf(/^www\./.test(hostname) ? hostname.slice(4) : hostname) !== -1;
     }
 
     static start() {
