@@ -38,11 +38,8 @@ Logger.info('ReverseProxy is listening on port 80 for http protocol');
 const app = express();
 const proxy = httpProxy.createProxyServer({});
 
-app.use('*', () => {
-    console.log('bou');
-});
-
 app.all('*', (req, res) => {
+    console.log('bouboy');
 
     let matchingRoute;
 
