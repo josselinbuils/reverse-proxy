@@ -6,7 +6,6 @@ const http = require('http');
 const httpProxy = require('http-proxy');
 const https = require('spdy');
 const LEX = require('letsencrypt-express');
-const morgan = require('morgan');
 
 const config = require('./config.json');
 const Logger = require('./logger');
@@ -22,19 +21,17 @@ var lex = LEX.create({
     }
 });
 
-let httpServer = http.createServer(LEX.createAcmeResponder(lex, (req, res) => {
+http.createServer(LEX.createAcmeResponder(lex, (req, res) => {
     res.setHeader('Location', 'https://' + req.headers.host + req.url);
     res.statusCode = 302;
     res.end();
-}));
+})).listen(80);
 
-httpServer.listen(80);
 Logger.info('ReverseProxy is listening on port 80 for http protocol');
 
 const app = express();
 const proxy = httpProxy.createProxyServer({});
 
-app.use(morgan('dev'));
 app.use(helmet());
 
 app.all('*', (req, res) => {
@@ -67,15 +64,14 @@ app.all('*', (req, res) => {
 
     if (matchingRoute) {
         let target = process.env[matchingRoute.service.toUpperCase() + '_PORT'];
-        Logger.info(`Redirect request ${request} to ${target}`);
+        Logger.info(`->${matchingRoute.service}: ${req.method} ${request}`);
         proxy.web(req, res, {target: target});
     } else {
-        Logger.info(`No route found for request ${request}`);
+        Logger.info(`No route found: ${req.method} ${request}`);
         res.status(404).send('Not found');
     }
 });
 
-let httpsServer = https.createServer(lex.httpsOptions, LEX.createAcmeResponder(lex, app));
+https.createServer(lex.httpsOptions, LEX.createAcmeResponder(lex, app)).listen(443);
 
-httpsServer.listen(443);
 Logger.info('ReverseProxy is listening on port 443 for https protocol');
