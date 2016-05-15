@@ -21,11 +21,6 @@ module.exports = class HTTPSProxy {
         let lex = LEX.create({
             configDir: '/letsencrypt',
             approveRegistration: function (hostname, cb) {
-
-                if (!/^www\./.test(hostname) && hostname.split('.').length === 2) {
-                    hostname = 'www.' + hostname;
-                }
-
                 if (HTTPSProxy.isHTTPSDomain(hostname)) {
                     Logger.info(`Approve registration for domain ${hostname}`);
 
