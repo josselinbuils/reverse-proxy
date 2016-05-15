@@ -13,6 +13,8 @@ const Logger = require('./logger');
 var lex = LEX.create({
     configDir: require('os').homedir() + '/letsencrypt/etc',
     approveRegistration: function (hostname, cb) {
+        Logger.info(`Approve registration for domain ${hostname}`);
+
         cb(null, {
             domains: [hostname],
             email: 'josselin.buils@gmail.com',
