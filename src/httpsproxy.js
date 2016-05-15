@@ -33,6 +33,9 @@ module.exports = class HTTPSProxy {
                 } else {
                     Logger.info(`${hostname} is not a HTTPS domain`);
                 }
+            },
+            onRequest: (req, res) => {
+                console.log('bou');
             }
         }).listen(null, null, function () {
             var server = this;
