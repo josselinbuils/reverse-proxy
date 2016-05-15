@@ -15,23 +15,8 @@ module.exports = class HTTPSProxy {
         return config.httpsDomains.indexOf(domain) !== -1;
     }
 
-    static start() {
+    static start(lex) {
         Logger.info('Start HTTPS proxy');
-
-        let lex = LEX.create({
-            configDir: require('os').homedir() + '/letsencrypt/etc',
-            approveRegistration: function (hostname, cb) {
-                if (HTTPSProxy.isHTTPSDomain(hostname)) {
-                    Logger.info(`Approve registration for domain ${hostname}`);
-
-                    cb(null, {
-                        domains: [hostname],
-                        email: 'josselin.buils@gmail.com',
-                        agreeTos: true
-                    });
-                }
-            }
-        });
 
         let app = express();
 

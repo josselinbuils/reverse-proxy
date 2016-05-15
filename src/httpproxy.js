@@ -2,6 +2,8 @@
 
 const express = require('express');
 const helmet = require('helmet');
+const http = require('http');
+const LEX = require('letsencrypt-express');
 
 const config = require('../config.json');
 const HTTPSProxy = require('./httpsproxy');
@@ -26,7 +28,7 @@ module.exports = class HTTPProxy {
             Router.route(req, res);
         });
 
-        app.listen(80);
+        http.createServer(LEX.createAcmeResponder(lex, app)).listen(80);
 
         Logger.info('ReverseProxy is listening on port 80 for HTTP protocol');
     }

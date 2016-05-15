@@ -7,6 +7,21 @@ const Router = require('./src/router');
 
 Logger.info('Start ReverseProxy');
 
+let lex = LEX.create({
+    configDir: require('os').homedir() + '/letsencrypt/etc',
+    approveRegistration: function (hostname, cb) {
+        if (HTTPSProxy.isHTTPSDomain(hostname)) {
+            Logger.info(`Approve registration for domain ${hostname}`);
+
+            cb(null, {
+                domains: [hostname],
+                email: 'josselin.buils@gmail.com',
+                agreeTos: true
+            });
+        }
+    }
+});
+
 Router.init();
-HTTPProxy.start();
-HTTPSProxy.start();
+HTTPProxy.start(lex);
+HTTPSProxy.start(lex);
