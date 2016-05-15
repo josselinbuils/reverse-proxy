@@ -39,7 +39,7 @@ module.exports = class HTTPSProxy {
             },
             onRequest: (req, res) => {
                 console.log('bou');
-                res.send('kikou');
+                res.end('kikou');
             }
         }).listen(null, null, function () {
             var server = this;
