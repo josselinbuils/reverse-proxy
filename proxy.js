@@ -17,6 +17,7 @@ const Logger = require('./logger');
 var lex = LEX.create({
     configDir: require('os').homedir() + '/letsencrypt/etc',
     approveRegistration: function (hostname, cb) {
+        Logger.info('kikou');
         cb(null, {
             domains: [hostname],
             email: 'josselin.buils@gmail.com',
@@ -36,6 +37,10 @@ Logger.info('ReverseProxy is listening on port 80 for http protocol');
 
 const app = express();
 const proxy = httpProxy.createProxyServer({});
+
+app.use('*', () => {
+    console.log('bou');
+});
 
 app.all('*', (req, res) => {
 
