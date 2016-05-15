@@ -21,7 +21,7 @@ module.exports = class HTTPSProxy {
         let lex = LEX.create({
             configDir: require('os').homedir() + '/letsencrypt/etc',
             approveRegistration: function (hostname, cb) {
-                if (isHTTPSDomain(hostname)) {
+                if (HTTPSProxy.isHTTPSDomain(hostname)) {
                     Logger.info(`Approve registration for domain ${hostname}`);
 
                     cb(null, {
@@ -39,7 +39,7 @@ module.exports = class HTTPSProxy {
 
         app.all('*', (req, res) => {
 
-            if (!isHTTPSDomain(req.hostname)) {
+            if (!HTTPSProxy.isHTTPSDomain(req.hostname)) {
                 Logger.info(`${req.hostname} is not a HTTPS domain, use HTTP protocol instead of HTTPS`);
                 return res.redirect('http://' + req.headers.host + req.url);
             }
@@ -52,7 +52,3 @@ module.exports = class HTTPSProxy {
         Logger.info('ReverseProxy is listening on port 443 for HTTPS protocol');
     }
 };
-
-function isHTTPSDomain(domain) {
-    return config.httpsDomains.indexOf(domain) !== -1;
-}

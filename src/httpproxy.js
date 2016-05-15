@@ -4,7 +4,7 @@ const express = require('express');
 const helmet = require('helmet');
 
 const config = require('../config.json');
-const HTTPSProxy = require('./httpproxy');
+const HTTPSProxy = require('./httpsproxy');
 const Logger = require('./logger');
 const Router = require('./router');
 
