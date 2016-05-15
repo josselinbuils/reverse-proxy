@@ -34,32 +34,40 @@ module.exports = class HTTPSProxy {
                     Logger.info(`${hostname} is not a HTTPS domain`);
                 }
             }
+        }).listen(null, null, function () {
+            var server = this;
+            var protocol = ('requestCert' in server) ? 'https' : 'http';
+            console.log("Listening at " + protocol + '://localhost:' + this.address().port);
+
+            server.use(function() {
+                console.log('kikou');
+            });
         });
 
-        let app = express();
-
-        app.use(helmet());
-
-        app.use((req, res, next) => {
-
-            console.log('boy');
-
-            if (!/^www\./.test(req.hostname) && req.hostname.split('.').length === 2) {
-                Logger.info(`Add www subdomain to ${req.hostname}`);
-                return res.redirect('https://www.' + req.hostname + req.url);
-            }
-
-            if (!HTTPSProxy.isHTTPSDomain(req.hostname)) {
-                Logger.info(`${req.hostname} is not a HTTPS domain, use HTTP instead`);
-                return res.redirect('http://' + req.hostname + req.url);
-            }
-
-            next();
-        });
-
-        app.use(LEX.createAcmeResponder(lex, Router.route));
-
-        https.createServer(lex.httpsOptions, app).listen(443);
+        // let app = express();
+        //
+        // app.use(helmet());
+        //
+        // app.use((req, res, next) => {
+        //
+        //     console.log('boy');
+        //
+        //     if (!/^www\./.test(req.hostname) && req.hostname.split('.').length === 2) {
+        //         Logger.info(`Add www subdomain to ${req.hostname}`);
+        //         return res.redirect('https://www.' + req.hostname + req.url);
+        //     }
+        //
+        //     if (!HTTPSProxy.isHTTPSDomain(req.hostname)) {
+        //         Logger.info(`${req.hostname} is not a HTTPS domain, use HTTP instead`);
+        //         return res.redirect('http://' + req.hostname + req.url);
+        //     }
+        //
+        //     next();
+        // });
+        //
+        // app.use(LEX.createAcmeResponder(lex, Router.route));
+        //
+        // https.createServer(lex.httpsOptions, app).listen(443);
 
         Logger.info('ReverseProxy is listening on port 443 for HTTPS protocol');
     }

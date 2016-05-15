@@ -10,5 +10,5 @@ const Router = require('./src/router');
 Logger.info('Start ReverseProxy');
 
 Router.init();
-HTTPProxy.start();
+//HTTPProxy.start();
 HTTPSProxy.start();
