@@ -57,7 +57,7 @@ module.exports = class HTTPSProxy {
 
         app.use(LEX.createAcmeResponder(lex, Router.route));
 
-        https.createServer(app).listen(443);
+        https.createServer(lex.httpsOptions, app).listen(443);
 
         Logger.info('ReverseProxy is listening on port 443 for HTTPS protocol');
     }
