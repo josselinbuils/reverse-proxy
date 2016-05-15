@@ -41,7 +41,7 @@ app.get('*', (req, res) => {
     }
 
     if (matchingRoute) {
-        proxy.web(req, res, {target: matchingRoute.target});
+        proxy.web(req, res, {target: process.env[matchingRoute.target.toUpperCase() + '_PORT']});
     } else {
         res.status(404).send('Not found');
     }
