@@ -64,8 +64,15 @@ app.all('*', (req, res) => {
 
     if (matchingRoute) {
         let target = process.env[matchingRoute.service.toUpperCase() + '_PORT'];
-        Logger.info(`->${matchingRoute.service}: ${req.method} ${request}`);
-        proxy.web(req, res, {target: target});
+
+        if (target) {
+            Logger.info(`->${matchingRoute.service}: ${req.method} ${request}`);
+            proxy.web(req, res, {target: target});
+        } else {
+            Logger.error(`Address of ${matchingRoute.service} not found`);
+            res.status(500).send('Internal server error');
+        }
+
     } else {
         Logger.info(`No route found: ${req.method} ${request}`);
         res.status(404).send('Not found');
