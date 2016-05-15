@@ -40,9 +40,10 @@ app.get('*', (req, res) => {
         }
     }
 
-    let request = req.protocol + req.hostname + req.path;
+    let request = req.protocol + '://' + req.hostname + req.path;
 
     if (matchingRoute) {
+        console.log(process.env);
         let target = process.env[matchingRoute.service.toUpperCase() + '_PORT'];
         Logger.info(`Redirect request ${request} to ${target}`);
         proxy.web(req, res, {target: target});
