@@ -11,13 +11,9 @@ const morgan = require('morgan');
 const config = require('./config.json');
 const Logger = require('./logger');
 
-//app.use(morgan('dev'));
-//app.use(helmet());
-
 var lex = LEX.create({
     configDir: require('os').homedir() + '/letsencrypt/etc',
     approveRegistration: function (hostname, cb) {
-        Logger.info('kikou');
         cb(null, {
             domains: [hostname],
             email: 'josselin.buils@gmail.com',
@@ -38,8 +34,10 @@ Logger.info('ReverseProxy is listening on port 80 for http protocol');
 const app = express();
 const proxy = httpProxy.createProxyServer({});
 
+app.use(morgan('dev'));
+app.use(helmet());
+
 app.all('*', (req, res) => {
-    console.log('bouboy');
 
     let matchingRoute;
 
@@ -68,7 +66,6 @@ app.all('*', (req, res) => {
     let request = req.protocol + '://' + req.hostname + req.path;
 
     if (matchingRoute) {
-        console.log(process.env);
         let target = process.env[matchingRoute.service.toUpperCase() + '_PORT'];
         Logger.info(`Redirect request ${request} to ${target}`);
         proxy.web(req, res, {target: target});
