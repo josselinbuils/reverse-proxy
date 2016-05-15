@@ -38,10 +38,6 @@ module.exports = class HTTPSProxy {
             var server = this;
             var protocol = ('requestCert' in server) ? 'https' : 'http';
             console.log("Listening at " + protocol + '://localhost:' + this.address().port);
-
-            server.use(function() {
-                console.log('kikou');
-            });
         });
 
         // let app = express();
