@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const http = require('http');
 const httpProxy = require('http-proxy');
 const https = require('spdy');
-const LEX = require('letsencrypt-express').testing();
+const LEX = require('letsencrypt-express');
 const morgan = require('morgan');
 
 const config = require('./config.json');
