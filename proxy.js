@@ -1,7 +1,6 @@
 'use strict';
 
 const LEX = require('letsencrypt-express');
-const os = require('os');
 
 const HTTPProxy = require('./src/httpproxy');
 const HTTPSProxy = require('./src/httpsproxy');
@@ -11,7 +10,7 @@ const Router = require('./src/router');
 Logger.info('Start ReverseProxy');
 
 let lex = LEX.create({
-    configDir: os.homedir() + '/letsencrypt/etc',
+    configDir: '/letsencrypt',
     approveRegistration: function (hostname, cb) {
         if (HTTPSProxy.isHTTPSDomain(hostname)) {
             Logger.info(`Approve registration for domain ${hostname}`);
