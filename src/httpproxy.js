@@ -18,9 +18,14 @@ module.exports = class HTTPProxy {
 
         app.all('*', (req, res) => {
 
+            if (!/^www/.test(req.hostname) && req.hostname.split('.').length === 2) {
+                Logger.info(`Add www subdomain to ${req.hostname}`);
+                return res.redirect(req.protocol + '://www.' + req.hostname + req.url);
+            }
+
             if (HTTPSProxy.isHTTPSDomain(req.hostname)) {
                 Logger.info(`${req.hostname} is a HTTPS domain, use HTTPS instead of HTTP`);
-                return res.redirect('https://' + req.headers.host + req.url);
+                return res.redirect('https://' + req.hostname + req.url);
             }
 
             Router.route(req, res);
