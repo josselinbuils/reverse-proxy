@@ -11,7 +11,7 @@ const Logger = require('./logger');
 const Router = require('./router');
 
 module.exports = class HTTPProxy {
-    static start() {
+    static start(lex) {
         Logger.info('Start HTTP proxy');
 
         let app = express();
