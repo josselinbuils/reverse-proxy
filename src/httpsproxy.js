@@ -43,7 +43,7 @@ module.exports = class HTTPSProxy {
         app.use((req, res, next) => {
 
             if (!/^www\./.test(req.hostname) && req.hostname.split('.').length === 2) {
-                Logger.info(`Add www subdomain to ${req.hostname}`);
+                Logger.info('Redirect to https://www.' + req.hostname + req.url);
                 return res.redirect('https://www.' + req.hostname + req.url);
             }
 
