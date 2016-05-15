@@ -28,7 +28,8 @@ module.exports = class HTTPProxy {
             Router.route(req, res);
         });
 
-        http.createServer(LEX.createAcmeResponder(lex, app)).listen(80);
+        //http.createServer(LEX.createAcmeResponder(lex, app)).listen(80);
+        app.listen(80);
 
         Logger.info('ReverseProxy is listening on port 80 for HTTP protocol');
     }
