@@ -45,14 +45,8 @@ module.exports = class Router {
         if (matchingRoute) {
             let target = process.env[matchingRoute.service.toUpperCase() + '_PORT'];
 
-            if (target) {
-                Logger.info(`->${matchingRoute.service}: ${req.method} ${request}`);
-                proxy.web(req, res, {target: target});
-            } else {
-                Logger.error(`Address of ${matchingRoute.service} not found: ${req.method} ${request}`);
-                res.status(500).send('Internal server error');
-            }
-
+            Logger.info(`->${matchingRoute.service}: ${req.method} ${request}`);
+            proxy.web(req, res, {target: `http://${matchingRoute.service}:${matchingRoute.port}`});
         } else {
             Logger.info(`No route found: ${req.method} ${request}`);
             res.status(404).send('Not found');
