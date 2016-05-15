@@ -24,6 +24,10 @@ module.exports = class HTTPSProxy {
                 if (HTTPSProxy.isHTTPSDomain(hostname)) {
                     Logger.info(`Approve registration for domain ${hostname}`);
 
+                    if (!/^www\./.test(hostname) && hostname.split('.').length === 2) {
+                        hostname = 'www.' + hostname;
+                    }
+
                     cb(null, {
                         domains: [hostname],
                         email: 'josselin.buils@gmail.com',
@@ -33,47 +37,26 @@ module.exports = class HTTPSProxy {
                 } else {
                     Logger.info(`${hostname} is not a HTTPS domain`);
                 }
-            },
-            httpsOptions: {
-                SNICallback: (test, cb) => {
-                    console.log('cmoi');
-                    cb();
-                }
-            },
-            onRequest: (req, res) => {
-                console.log('bou');
-                res.end('kikou');
             }
-        }).listen(null, null, function () {
-            var server = this;
-            var protocol = ('requestCert' in server) ? 'https' : 'http';
-            console.log("Listening at " + protocol + '://localhost:' + this.address().port);
         });
 
-        // let app = express();
-        //
-        // app.use(helmet());
-        //
-        // app.use((req, res, next) => {
-        //
-        //     console.log('boy');
-        //
-        //     if (!/^www\./.test(req.hostname) && req.hostname.split('.').length === 2) {
-        //         Logger.info(`Add www subdomain to ${req.hostname}`);
-        //         return res.redirect('https://www.' + req.hostname + req.url);
-        //     }
-        //
-        //     if (!HTTPSProxy.isHTTPSDomain(req.hostname)) {
-        //         Logger.info(`${req.hostname} is not a HTTPS domain, use HTTP instead`);
-        //         return res.redirect('http://' + req.hostname + req.url);
-        //     }
-        //
-        //     next();
-        // });
-        //
-        // app.use(LEX.createAcmeResponder(lex, Router.route));
-        //
-        // https.createServer(lex.httpsOptions, app).listen(443);
+        let app = express();
+
+        app.use(helmet());
+
+        app.use((req, res, next) => {
+
+            if (!/^www\./.test(req.hostname) && req.hostname.split('.').length === 2) {
+                Logger.info(`Add www subdomain to ${req.hostname}`);
+                return res.redirect('https://www.' + req.hostname + req.url);
+            }
+
+            next();
+        });
+
+        app.use(LEX.createAcmeResponder(lex, Router.route));
+
+        https.createServer(lex.httpsOptions, app).listen(443);
 
         Logger.info('ReverseProxy is listening on port 443 for HTTPS protocol');
     }
