@@ -18,19 +18,29 @@ module.exports = class HTTPSProxy {
     static start(lex) {
         Logger.info('Start HTTPS proxy');
 
+        let lex = LEX.create({
+            configDir: '/letsencrypt',
+            approveRegistration: function (hostname, cb) {
+                if (HTTPSProxy.isHTTPSDomain(hostname)) {
+                    Logger.info(`Approve registration for domain ${hostname}`);
+
+                    cb(null, {
+                        domains: [hostname],
+                        email: 'josselin.buils@gmail.com',
+                        agreeTos: true
+                    });
+
+                } else {
+                    Logger.info(`${hostname} is not a HTTPS domain`);
+                }
+            }
+        });
+
         let app = express();
 
         app.use(helmet());
 
-        app.all('*', (req, res) => {
-
-            if (!HTTPSProxy.isHTTPSDomain(req.hostname)) {
-                Logger.info(`${req.hostname} is not a HTTPS domain, use HTTP protocol instead of HTTPS`);
-                return res.redirect('http://' + req.headers.host + req.url);
-            }
-
-            Router.route(req, res);
-        });
+        app.all('*', Router.route);
 
         https.createServer(lex.httpsOptions, LEX.createAcmeResponder(lex, app)).listen(443);
 
