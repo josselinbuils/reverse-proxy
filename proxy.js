@@ -2,7 +2,9 @@
 
 const express = require('express');
 const helmet = require('helmet');
+const http = require('http');
 const httpProxy = require('http-proxy');
+const https = require('spdy');
 const LEX = require('letsencrypt-express').testing();
 const morgan = require('morgan');
 
@@ -12,9 +14,8 @@ const Logger = require('./logger');
 const app = express();
 const proxy = httpProxy.createProxyServer({});
 
-
-app.use(morgan('dev'));
-app.use(helmet());
+//app.use(morgan('dev'));
+//app.use(helmet());
 
 var lex = LEX.create({
     configDir: require('os').homedir() + '/letsencrypt/etc',
@@ -27,9 +28,13 @@ var lex = LEX.create({
     }
 });
 
-app.use(function (req, res) {
-    res.send({ success: true });
-});
+http.createServer(LEX.createAcmeResponder(lex, function redirectHttps(req, res) {
+    res.setHeader('Location', 'https://' + req.headers.host + req.url);
+    res.statusCode = 302;
+    res.end();
+})).listen(80);
+
+Logger.info('ReverseProxy is listening on port 80 for http protocol');
 
 app.all('*', (req, res) => {
 
@@ -70,9 +75,6 @@ app.all('*', (req, res) => {
     }
 });
 
-lex.onRequest = app;
+https.createServer(lex.httpsOptions, LEX.createAcmeResponder(lex, app)).listen(443);
 
-lex.listen([80], [443, 5001], function () {
-    let protocol = ('requestCert' in this) ? 'https': 'http';
-    Logger.info(`ReverseProxy is listening on port ${this.address().port} using ${protocol} protocol`);
-});
+Logger.info('ReverseProxy is listening on port 443 for https protocol');
