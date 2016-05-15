@@ -34,6 +34,9 @@ module.exports = class HTTPSProxy {
                     Logger.info(`${hostname} is not a HTTPS domain`);
                 }
             },
+            httpsOptions: {
+                SNICallback: () => console.log(cmoi)
+            },
             onRequest: (req, res) => {
                 console.log('bou');
             }
