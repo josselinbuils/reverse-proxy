@@ -35,7 +35,10 @@ module.exports = class HTTPSProxy {
                 }
             },
             httpsOptions: {
-                SNICallback: () => console.log('cmoi')
+                SNICallback: (test, cb) => {
+                    console.log('cmoi');
+                    cb();
+                }
             },
             onRequest: (req, res) => {
                 console.log('bou');
