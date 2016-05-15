@@ -40,9 +40,14 @@ app.get('*', (req, res) => {
         }
     }
 
+    let request = req.protocol + req.hostname + req.path;
+
     if (matchingRoute) {
-        proxy.web(req, res, {target: process.env[matchingRoute.service.toUpperCase() + '_PORT']});
+        let target = process.env[matchingRoute.service.toUpperCase() + '_PORT'];
+        Logger.info(`Redirect request ${request} to ${target}`);
+        proxy.web(req, res, {target: target});
     } else {
+        Logger.info(`No route found for request ${request}`);
         res.status(404).send('Not found');
     }
 });
