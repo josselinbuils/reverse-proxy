@@ -14,7 +14,7 @@ const proxy = httpProxy.createProxyServer({});
 app.use(morgan('dev'));
 app.use(helmet());
 
-app.get('*', (req, res) => {
+app.all('*', (req, res) => {
 
     let matchingRoute;
 
