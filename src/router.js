@@ -49,7 +49,7 @@ module.exports = class Router {
                 Logger.info(`->${matchingRoute.service}: ${req.method} ${request}`);
                 proxy.web(req, res, {target: target});
             } else {
-                Logger.error(`Address of ${matchingRoute.service} not found`);
+                Logger.error(`Address of ${matchingRoute.service} not found: ${req.method} ${request}`);
                 res.status(500).send('Internal server error');
             }
 
