@@ -1,0 +1,11 @@
+{
+  "name": "ReverseProxy",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "node server"
+  },
+  "dependencies": {
+    "express": "^4.13.4",
+    "http-proxy": "1.13.2"
+  }
+}
