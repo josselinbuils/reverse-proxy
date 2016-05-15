@@ -19,7 +19,7 @@ module.exports = class HTTPProxy {
         app.use((req, res, next) => {
 
             let addPrefix = !/^www\./.test(req.hostname) && req.hostname.split('.').length === 2,
-                hostname = addPrefix ? 'www' + req.hostname : req.hostname;
+                hostname = addPrefix ? 'www.' + req.hostname : req.hostname;
 
             if (HTTPSProxy.isHTTPSDomain(req.hostname)) {
                 Logger.info(req.hostname + ' is a HTTPS domain, use HTTPS instead of HTTP');
