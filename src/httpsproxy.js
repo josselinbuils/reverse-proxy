@@ -12,7 +12,7 @@ const Router = require('./router');
 module.exports = class HTTPSProxy {
 
     static isHTTPSDomain(hostname) {
-        return config.httpsHosts.indexOf(/^www\./.test(hostname) ? hostname.slice(4) : hostname) !== -1;
+        return config.httpsHosts.indexOf(hostname) !== -1;
     }
 
     static start() {
@@ -22,16 +22,16 @@ module.exports = class HTTPSProxy {
             configDir: '/letsencrypt',
             approveRegistration: function (hostname, cb) {
                 if (HTTPSProxy.isHTTPSDomain(hostname)) {
-                    Logger.info(`Approve registration for domain ${hostname}`);
+                    Logger.info('Approve registration for domain' + hostname);
 
                     cb(null, {
-                        domains: [hostname],
+                        domains: config.httpsHosts,
                         email: 'josselin.buils@gmail.com',
                         agreeTos: true
                     });
 
                 } else {
-                    Logger.info(`${hostname} is not a HTTPS domain`);
+                    Logger.info(hostname + ' is not a HTTPS domain');
                 }
             }
         });
