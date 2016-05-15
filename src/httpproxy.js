@@ -9,7 +9,7 @@ const Logger = require('./logger');
 const Router = require('./router');
 
 module.exports = class HTTPProxy {
-    static start(lex) {
+    static start() {
         Logger.info('Start HTTP proxy');
 
         let app = express();

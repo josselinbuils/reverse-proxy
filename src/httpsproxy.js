@@ -15,7 +15,7 @@ module.exports = class HTTPSProxy {
         return config.httpsDomains.indexOf(domain) !== -1;
     }
 
-    static start(lex) {
+    static start() {
         Logger.info('Start HTTPS proxy');
 
         let lex = LEX.create({
