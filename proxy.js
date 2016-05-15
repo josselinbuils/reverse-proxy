@@ -3,6 +3,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const httpProxy = require('http-proxy');
+const LEX = require('letsencrypt-express').testing();
 const morgan = require('morgan');
 
 const config = require('./config.json');
@@ -11,8 +12,24 @@ const Logger = require('./logger');
 const app = express();
 const proxy = httpProxy.createProxyServer({});
 
+
 app.use(morgan('dev'));
 app.use(helmet());
+
+var lex = LEX.create({
+    configDir: require('os').homedir() + '/letsencrypt/etc',
+    approveRegistration: function (hostname, cb) {
+        cb(null, {
+            domains: ['pizzaday.party', 'www.pizzaday.party'],
+            email: 'josselin.buils@gmail.com',
+            agreeTos: true
+        });
+    }
+});
+
+app.use(function (req, res) {
+    res.send({ success: true });
+});
 
 app.all('*', (req, res) => {
 
@@ -53,5 +70,9 @@ app.all('*', (req, res) => {
     }
 });
 
-app.listen(config.port);
-Logger.info('ReverseProxy is listening on port ' + config.port);
+lex.onRequest = app;
+
+lex.listen([80], [443, 5001], function () {
+    let protocol = ('requestCert' in this) ? 'https': 'http';
+    Logger.info(`ReverseProxy is listening on port ${this.address().port} using ${protocol} protocol`);
+});
