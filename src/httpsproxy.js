@@ -15,7 +15,7 @@ module.exports = class HTTPSProxy {
         return config.httpsHosts.indexOf(/^www\./.test(hostname) ? hostname.slice(4) : hostname) !== -1;
     }
 
-    static start() {
+    static start(lex) {
         Logger.info('Start HTTPS proxy');
 
         let app = express();
