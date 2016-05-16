@@ -26,11 +26,11 @@ module.exports = class HTTPProxy {
             if (HTTPSProxy.isHTTPSDomain(req.hostname)) {
                 Logger.info(req.hostname + ' is a HTTPS domain, use HTTPS instead of HTTP');
 
-                Logger.info('Redirect to https://' + hostname + req.url);
+                Logger.info(`Redirect from ${req.protocol}://${req.hostname + req.url} to https://${hostname}${req.url}`);
                 return res.redirect('https://' + hostname + req.url);
 
             } else if (addPrefix) {
-                Logger.info('Redirect to http://' + hostname + req.url);
+                Logger.info(`Redirect from ${req.protocol}://${req.hostname}${req.url} to http://${hostname}${req.url}`);
                 return res.redirect('http://' + hostname + req.url);
             }
 
