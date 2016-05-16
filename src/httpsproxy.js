@@ -22,7 +22,7 @@ module.exports = class HTTPSProxy {
             configDir: '/letsencrypt',
             approveRegistration: function (hostname, cb) {
                 if (HTTPSProxy.isHTTPSDomain(hostname)) {
-                    Logger.info('Approve registration for domain' + hostname);
+                    Logger.info('Approve registration for domain ' + hostname);
 
                     cb(null, {
                         domains: [hostname],
