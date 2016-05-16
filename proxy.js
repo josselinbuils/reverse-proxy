@@ -24,8 +24,7 @@ let lex = LEX.create({
         } else {
             Logger.info(hostname + ' is not a HTTPS domain');
         }
-    },
-    server: 'https://acme-staging.api.letsencrypt.org/directory'
+    }
 });
 
 Router.init();
