@@ -24,9 +24,7 @@ let lex = LEX.create({
         } else {
             Logger.info(hostname + ' is not a HTTPS domain');
         }
-    },
-    lifetime: 10000,
-    memorizeFor: 10000
+    }
 });
 
 Router.init();
