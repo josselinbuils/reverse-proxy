@@ -12,7 +12,7 @@ module.exports = class Router {
     static init() {
         Logger.info(`Initialize router`);
         proxy = httpProxy.createProxyServer({});
-        proxy.on('error', error => Logger.error('Proxy error: ' + error.stack));
+        proxy.on('error', error => Logger.error('Proxy error: ' + error.message));
     }
 
     static route(req, res) {
