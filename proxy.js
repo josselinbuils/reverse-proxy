@@ -12,18 +12,16 @@ Logger.info('Start ReverseProxy');
 let lex = LEX.create({
     configDir: '/letsencrypt',
     approveRegistration: function (hostname, cb) {
-        if (HTTPSProxy.isHTTPSDomain(hostname)) {
-            Logger.info('Approve registration for domain ' + hostname);
 
-            cb(null, {
-                domains: [hostname],
-                email: 'josselin.buils@gmail.com',
-                agreeTos: true
-            });
+        let isHTTPS = HTTPSProxy.isHTTPSDomain(hostname);
 
-        } else {
-            Logger.info(hostname + ' is not a HTTPS domain');
-        }
+        Logger.info(`Approve registration for domain ${hostname}: ${isHTTPS}`);
+
+        cb(null, {
+            domains: [hostname],
+            email: 'josselin.buils@gmail.com',
+            agreeTos: isHTTPS
+        });
     }
 });
 
