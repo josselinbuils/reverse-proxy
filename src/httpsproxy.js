@@ -11,6 +11,19 @@ const Router = require('./router');
 
 module.exports = class HTTPSProxy {
 
+    static approveRegistration(hostname, cb) {
+
+        let isHTTPS = HTTPSProxy.isHTTPSDomain(hostname);
+
+        Logger.info(`Approve registration for domain ${hostname}: ${isHTTPS}`);
+
+        cb(null, {
+            domains: [hostname],
+            email: 'josselin.buils@gmail.com',
+            agreeTos: isHTTPS
+        });
+    }
+
     static isHTTPSDomain(hostname) {
         return config.httpsHosts.indexOf(/^www\./.test(hostname) ? hostname.slice(4) : hostname) !== -1;
     }
