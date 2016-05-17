@@ -62,7 +62,7 @@ module.exports = class Router {
         for (let i = 0; i < redirects.length; i++) {
 
             let path = redirects[i].path,
-                pathRegex = '^\/' + path.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+                pathRegex = '^' + path.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 
             if (path === '*' || new RegExp(pathRegex).test(req.url)) {
                 redirect = redirects[i];
