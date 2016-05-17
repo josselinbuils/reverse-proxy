@@ -56,36 +56,25 @@ module.exports = class Router {
 
     static route(req, res) {
 
-        let matchingRoute,
-            reqHostname = /^www\./.test(req.hostname) ? req.hostname.slice(4) : req.hostname;
+        let redirects = req.hostConfig.redirects,
+            redirect;
 
-        for (let i = 0; i < config.map.length && !matchingRoute; i++) {
+        for (let i = 0; i < redirects.length; i++) {
 
-            let route = config.map[i];
+            let path = redirects[i].path,
+                pathRegex = '^\/' + path.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 
-            for (let j = 0; j < route.hosts.length; j++) {
-
-                let splitHost = route.hosts[j].split('/'),
-                    hostname = splitHost[0],
-                    match = hostname === reqHostname;
-
-                if (splitHost.length > 1) {
-                    let escapedPath = splitHost[1].replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-                    match = match && new RegExp('^\/' + escapedPath).test(req.path);
-                }
-
-                if (match) {
-                    matchingRoute = route;
-                    break;
-                }
+            if (path === '*' || new RegExp(pathRegex).test(req.url)) {
+                redirect = redirects[i];
+                break;
             }
         }
 
         let request = req.protocol + '://' + req.hostname + req.path;
 
-        if (matchingRoute) {
-            Logger.info(`->${matchingRoute.service}: ${req.method} ${request}`);
-            proxy.web(req, res, {target: `http://${matchingRoute.service}:${matchingRoute.port}`});
+        if (redirect) {
+            Logger.info(`->${redirect.service}: ${req.method} ${request}`);
+            proxy.web(req, res, {target: `http://${redirect.service}:${redirect.port}`});
         } else {
             Logger.info(`No route found: ${req.method} ${request}`);
             res.status(404).send('Not found');
