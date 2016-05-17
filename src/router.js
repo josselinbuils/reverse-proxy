@@ -2,7 +2,6 @@
 
 const httpProxy = require('http-proxy');
 
-const constants = require('./constants.json');
 const config = require('../config.json');
 const Logger = require('./logger');
 
