@@ -34,7 +34,7 @@ Router.init();
 
 app.use(helmet());
 app.use(Router.checkHost);
-app.get('/url/', Router.redirect);
+app.get('/url/:url', Router.redirect);
 app.use(Router.checkUrl);
 app.use(Router.route);
 
