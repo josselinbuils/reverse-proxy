@@ -54,6 +54,19 @@ module.exports = class Router {
         proxy.on('error', error => Logger.error('Proxy error: ' + error.message));
     }
 
+    static redirect(req, res) {
+
+        let url = decodeURIComponent(req.params.url);
+
+        Logger.info('GET ' + url);
+
+        proxy.web(req, res, {
+            changeOrigin: true,
+            ignorePath: true,
+            target: url
+        });
+    }
+
     static route(req, res) {
 
         let redirects = req.hostConfig.redirects,
