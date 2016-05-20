@@ -94,7 +94,11 @@ module.exports = class Router {
 
         if (redirect) {
             Logger.info(`->${redirect.service}: ${req.method} ${request}`);
-            proxy.web(req, res, {target: `http://${redirect.service}:${redirect.port}`});
+            proxy.web(req, res, {
+                changeOrigin: false,
+                ignorePath: false,
+                target: `http://${redirect.service}:${redirect.port}`
+            });
         } else {
             Logger.info(`No route found: ${req.method} ${request}`);
             res.status(404).send('Not found');
