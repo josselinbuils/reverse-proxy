@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = class Logger {
 
     static error(str) {
@@ -12,17 +10,17 @@ module.exports = class Logger {
 };
 
 function log(level, str) {
-    let date = '\x1b[0m[' + new Date().toDateString() + ' ' + new Date().toLocaleTimeString() + '] ';
+    const date = `\x1b[0m[${new Date().toDateString()} ${new Date().toLocaleTimeString()}] `;
 
     switch (level) {
         case 'ERROR':
-            level = '\x1b[91m[' + level + ']';
+            level = `\x1b[91m[${level}]`;
             break;
         case 'INFO':
-            level =  '\x1b[32m[' + level + ']\x1b[0m';
+            level = `\x1b[32m[${level}]\x1b[0m`;
     }
 
-    str = ' ' + str + '\x1b[0m';
+    str = ` ${str}\x1b[0m`;
 
     console.log(date + level + str);
 }
