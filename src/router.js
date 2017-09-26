@@ -66,11 +66,11 @@ module.exports = class Router {
                 });
             } else {
                 Logger.info(`No route found: ${req.method} ${request}`);
-                res.status(NOT_FOUND);
+                res.status(NOT_FOUND).end();
             }
         } else {
             Logger.error('Invalid configuration: host property "redirects" should be an array');
-            res.status(NOT_FOUND);
+            res.status(NOT_FOUND).end();
         }
     }
 };
