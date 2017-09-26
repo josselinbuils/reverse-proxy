@@ -20,23 +20,14 @@ module.exports = class Router {
     }
 
     static checkUrl(req, res, next) {
-        const addPrefix = !/^www\./.test(req.hostname) && req.hostname.split('.').length === 2;
-
         if (req.protocol !== 'https' && req.hostConfig.https && req.hostConfig.forceHttps) {
             Logger.info(req.hostname + ' is a HTTPS only domain, use HTTPS instead of HTTP');
 
-            const newUrl = 'https://' + (addPrefix ? 'www.' : '') + req.hostname + req.url;
+            const newUrl = 'https://' + req.hostname + req.url;
 
             Logger.info(`Redirect from ${req.protocol}://${req.hostname + req.url} to ${newUrl}`);
             return res.redirect(newUrl);
-
-        } else if (addPrefix) {
-            const newUrl = req.protocol + '://www.' + req.hostname + req.url;
-
-            Logger.info(`Redirect from ${req.protocol}://${req.hostname}${req.url} to ${newUrl}`);
-            return res.redirect(newUrl);
         }
-
         next();
     }
 

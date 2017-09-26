@@ -3,9 +3,8 @@ const helmet = require('helmet');
 const http = require('http');
 const https = require('spdy');
 const leChallengeFs = require('le-challenge-fs');
-const leStoreCertbot = require('le-store-certbot')
+const leStoreCertbot = require('le-store-certbot');
 const LEX = require('greenlock-express');
-const redirectHTTPS = require('redirect-https');
 
 const Logger = require('./logger');
 const Router = require('./router');
@@ -61,7 +60,7 @@ app.get('/url/:url', Router.redirect);
 app.use(Router.checkUrl);
 app.use(Router.route);
 
-http.createServer(lex.middleware(redirectHTTPS())).listen(80, function () {
+http.createServer(lex.middleware(app)).listen(80, function () {
     Logger.info(`ReverseProxy is listening on port ${this.address().port} for HTTP protocol`);
 });
 
