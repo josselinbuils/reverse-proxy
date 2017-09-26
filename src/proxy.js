@@ -11,7 +11,7 @@ const Router = require('./router');
 
 Logger.info('Start ReverseProxy');
 
-let lex = LEX.create({
+const lex = LEX.create({
     server: 'https://acme-v01.api.letsencrypt.org/directory',
     challenges: {
         'http-01': leChallengeFs.create({}),
@@ -33,14 +33,12 @@ let lex = LEX.create({
             opts.domains = certs.altnames;
         } else {
             const hostname = opts.domains[0];
-            const hostConfig = Router.getHostConfig(hostname);
-            const isHTTPS = hostConfig && hostConfig.https;
 
             opts.domains = [hostname];
             opts.email = 'josselin.buils@gmail.com';
-            opts.agreeTos = isHTTPS;
+            opts.agreeTos = Router.isHTTPS(hostname);
 
-            Logger.info(`Approve registration for domain ${hostname}: ${isHTTPS}`);
+            Logger.info(`Approve registration for domain ${hostname}: ${opts.agreeTos}`);
         }
 
         cb(null, {
@@ -50,14 +48,13 @@ let lex = LEX.create({
     }
 });
 
-let app = express();
+const app = express();
 
 Router.init();
 
 app.use(helmet());
 app.use(Router.checkHost);
-app.get('/url/:url', Router.redirect);
-app.use(Router.checkUrl);
+app.use(Router.redirectHTTPS);
 app.use(Router.route);
 
 http.createServer(lex.middleware(app)).listen(80, function () {

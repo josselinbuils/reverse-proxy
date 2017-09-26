@@ -3,24 +3,40 @@ const httpProxy = require('http-proxy');
 const config = require('../config.json');
 const Logger = require('./logger');
 
-let proxy;
+const FORBIDDEN = 403;
+const NOT_FOUND = 404;
 
 module.exports = class Router {
 
     static checkHost(req, res, next) {
         const hostConfig = Router.getHostConfig(req.hostname);
 
-        if (hostConfig === undefined) {
-            return res.status(403).end('Unknown host');
+        if (!hostConfig) {
+            return res.status(FORBIDDEN).end('Unknown host');
         }
-
-        req.hostConfig = hostConfig;
 
         next();
     }
 
-    static checkUrl(req, res, next) {
-        if (req.protocol !== 'https' && req.hostConfig.https && req.hostConfig.forceHttps) {
+    static getHostConfig(hostname) {
+        return config.hosts[/^www\./.test(hostname) ? hostname.slice(4) : hostname];
+    }
+
+    static init() {
+        Logger.info(`Initializes router`);
+        Router.proxy = httpProxy.createProxyServer({});
+        Router.proxy.on('error', error => Logger.error('Proxy error: ' + error.message));
+    }
+
+    static isHTTPS(hostname) {
+        const hostConfig = Router.getHostConfig(hostname);
+        return hostConfig && hostConfig.https;
+    }
+
+    static redirectHTTPS(req, res, next) {
+        const hostConfig = Router.getHostConfig(req.hostname);
+
+        if (req.protocol !== 'https' && hostConfig.https && hostConfig.forceHttps) {
             Logger.info(req.hostname + ' is a HTTPS only domain, use HTTPS instead of HTTP');
 
             const newUrl = 'https://' + req.hostname + req.url;
@@ -31,60 +47,30 @@ module.exports = class Router {
         next();
     }
 
-    static getHostConfig(hostname) {
-        return config.hosts[/^www\./.test(hostname) ? hostname.slice(4) : hostname];
-    }
-
-    static init() {
-        Logger.info(`Initialize router`);
-        proxy = httpProxy.createProxyServer({});
-        proxy.on('error', error => Logger.error('Proxy error: ' + error.message));
-    }
-
-    static redirect(req, res) {
-        const url = decodeURIComponent(req.params.url);
-        const urlRegex = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})).?)(?::\d{2,5})?(?:[/?#]\S*)?$/i;
-
-        if (!urlRegex.test(url)) {
-            Logger.error('Invalid url: ' + url);
-            return res.status(400).end('Invalid url');
-        }
-
-        Logger.info('GET ' + url);
-
-        proxy.web(req, res, {
-            changeOrigin: true,
-            ignorePath: true,
-            target: url
-        });
-    }
-
-    static route(req, res) {
-        const redirects = req.hostConfig.redirects;
-        let redirect;
-
-        for (let i = 0; i < redirects.length; i++) {
-            const path = redirects[i].path;
-            const pathRegex = '^' + path.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-
-            if (path === '*' || new RegExp(pathRegex).test(req.url)) {
-                redirect = redirects[i];
-                break;
-            }
-        }
-
+    route(req, res) {
+        const hostConfig = Router.getHostConfig(req.hostname);
         const request = req.protocol + '://' + req.hostname + req.path;
 
-        if (redirect) {
-            Logger.info(`->${redirect.service}: ${req.method} ${request}`);
-            proxy.web(req, res, {
-                changeOrigin: false,
-                ignorePath: false,
-                target: `http://${redirect.service}:${redirect.port}`
-            });
+        let redirect;
+
+        if (Array.isArray(hostConfig.redirects)) {
+            redirect = hostConfig.redirects.find(redirect => new RegExp(redirect.path).test(req.url));
+
+            if (redirect) {
+                Logger.info(`->${redirect.service}: ${req.method} ${request}`);
+
+                Router.proxy.web(req, res, {
+                    changeOrigin: false,
+                    ignorePath: false,
+                    target: `http://${redirect.service}:${redirect.port}`
+                });
+            } else {
+                Logger.info(`No route found: ${req.method} ${request}`);
+                res.status(NOT_FOUND);
+            }
         } else {
-            Logger.info(`No route found: ${req.method} ${request}`);
-            res.status(404).send('Not found');
+            Logger.error('Invalid configuration: host property "redirects" should be an array');
+            res.status(NOT_FOUND);
         }
     }
 };
