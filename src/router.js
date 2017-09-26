@@ -57,14 +57,9 @@ module.exports = class Router {
             redirect = hostConfig.redirects.find(redirect => req.path.indexOf(redirect.path) === 0);
 
             if (redirect) {
-                const target =  `http://${redirect.service}:${redirect.port}${req.path.slice(redirect.path.length)}`;
-
-                Logger.info(`${req.method} ${request} -> ${target}`);
-
-                Router.proxy.web(req, res, {
-                    ignorePath: true,
-                    target: `http://${redirect.service}:${redirect.port}${req.path.slice(redirect.path.length)}`
-                });
+                const target = `http://${redirect.service}:${redirect.port}`;
+                Logger.info(`${req.method} ${request} -> ${target + req.path}`);
+                Router.proxy.web(req, res, {target: target});
             } else {
                 Logger.info(`No route found: ${req.method} ${request}`);
                 res.status(NOT_FOUND).end();
