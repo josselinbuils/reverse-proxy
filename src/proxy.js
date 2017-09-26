@@ -28,16 +28,25 @@ let lex = LEX.create({
         logsDir: '/letsencrypt/var/log',
         webrootPath: '/letsencrypt/srv/www/:hostname/.well-known/acme-challenge'
     }),
-    approveDomains: (hostname, cb) => {
-        const hostConfig = Router.getHostConfig(hostname);
-        const isHTTPS = hostConfig && hostConfig.https;
+    approveDomains: (opts, certs, cb) => {
 
-        Logger.info(`Approve registration for domain ${hostname}: ${isHTTPS}`);
+        if (certs) {
+            opts.domains = certs.altnames;
+        } else {
+            const hostname = opts.domains[0];
+            const hostConfig = Router.getHostConfig(hostname);
+            const isHTTPS = hostConfig && hostConfig.https;
+
+            opts.domains = [hostname];
+            opts.email = 'josselin.buils@gmail.com';
+            opts.agreeTos = isHTTPS;
+
+            Logger.info(`Approve registration for domain ${hostname}: ${isHTTPS}`);
+        }
 
         cb(null, {
-            domains: [hostname],
-            email: 'josselin.buils@gmail.com',
-            agreeTos: isHTTPS
+            options: opts,
+            certs: certs
         });
     }
 });
