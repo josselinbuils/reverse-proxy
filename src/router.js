@@ -49,7 +49,7 @@ module.exports = class Router {
 
     static route(req, res) {
         const hostConfig = Router.getHostConfig(req.hostname);
-        let request = req.protocol + '://' + req.hostname + req.path;
+        const request = req.protocol + '://' + req.hostname + req.path;
 
         let redirect;
 
@@ -57,14 +57,13 @@ module.exports = class Router {
             redirect = hostConfig.redirects.find(redirect => req.path.indexOf(redirect.path) === 0);
 
             if (redirect) {
-                request = req.protocol + '://' + req.hostname + req.path.slice(redirect.path.length);
+                const target =  `http://${redirect.service}:${redirect.port}${req.path.slice(redirect.path.length)}`;
 
-                Logger.info(`->${redirect.service}: ${req.method} ${request}`);
+                Logger.info(`${req.method} ${request} -> ${target}`);
 
                 Router.proxy.web(req, res, {
-                    changeOrigin: false,
-                    ignorePath: false,
-                    target: `http://${redirect.service}:${redirect.port}`
+                    ignorePath: true,
+                    target: `http://${redirect.service}:${redirect.port}${req.path.slice(redirect.path.length)}`
                 });
             } else {
                 Logger.info(`No route found: ${req.method} ${request}`);
