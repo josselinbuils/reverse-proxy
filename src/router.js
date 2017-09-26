@@ -9,7 +9,7 @@ const NOT_FOUND = 404;
 module.exports = class Router {
 
     static checkHost(req, res, next) {
-        const hostConfig = Router.getHostConfig(req.hostname);
+        const hostConfig = this.getHostConfig(req.hostname);
 
         if (!hostConfig) {
             return res.status(FORBIDDEN).end('Unknown host');
@@ -29,12 +29,12 @@ module.exports = class Router {
     }
 
     static isHTTPS(hostname) {
-        const hostConfig = Router.getHostConfig(hostname);
+        const hostConfig = this.getHostConfig(hostname);
         return hostConfig && hostConfig.https;
     }
 
     static redirectHTTPS(req, res, next) {
-        const hostConfig = Router.getHostConfig(req.hostname);
+        const hostConfig = this.getHostConfig(req.hostname);
 
         if (req.protocol !== 'https' && hostConfig.https && hostConfig.forceHttps) {
             Logger.info(req.hostname + ' is a HTTPS only domain, use HTTPS instead of HTTP');
@@ -47,8 +47,8 @@ module.exports = class Router {
         next();
     }
 
-    route(req, res) {
-        const hostConfig = Router.getHostConfig(req.hostname);
+    static route(req, res) {
+        const hostConfig = this.getHostConfig(req.hostname);
         const request = req.protocol + '://' + req.hostname + req.path;
 
         let redirect;
