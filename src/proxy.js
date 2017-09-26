@@ -13,7 +13,7 @@ const Router = require('./router');
 Logger.info('Start ReverseProxy');
 
 let lex = LEX.create({
-    server: 'staging',
+    server: 'https://acme-v01.api.letsencrypt.org/directory',
     challenges: {
         'http-01': leChallengeFs.create({}),
         'tls-sni-01': leChallengeFs.create({})
