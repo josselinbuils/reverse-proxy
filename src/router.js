@@ -54,7 +54,7 @@ module.exports = class Router {
         let redirect;
 
         if (Array.isArray(hostConfig.redirects)) {
-            redirect = hostConfig.redirects.find(redirect => redirect.indexOf(redirect.path) === 0);
+            redirect = hostConfig.redirects.find(redirect => req.path.indexOf(redirect.path) === 0);
 
             if (redirect) {
                 request = req.protocol + '://' + req.hostname + req.path.slice(redirect.path.length);
