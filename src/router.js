@@ -49,14 +49,16 @@ module.exports = class Router {
 
     static route(req, res) {
         const hostConfig = Router.getHostConfig(req.hostname);
-        const request = req.protocol + '://' + req.hostname + req.path;
+        let request = req.protocol + '://' + req.hostname + req.path;
 
         let redirect;
 
         if (Array.isArray(hostConfig.redirects)) {
-            redirect = hostConfig.redirects.find(redirect => new RegExp(redirect.path).test(req.url));
+            redirect = hostConfig.redirects.find(redirect => redirect.indexOf(redirect.path) === 0);
 
             if (redirect) {
+                request = req.protocol + '://' + req.hostname + req.path.slice(redirect.path.length);
+
                 Logger.info(`->${redirect.service}: ${req.method} ${request}`);
 
                 Router.proxy.web(req, res, {
