@@ -54,7 +54,9 @@ module.exports = class Router {
         let redirect;
 
         if (Array.isArray(hostConfig.redirects)) {
-            redirect = hostConfig.redirects.find(redirect => req.path.indexOf(redirect.path) === 0);
+            redirect = hostConfig.redirects.find(
+                redirect => req.path.toLowerCase().indexOf(redirect.path.toLowerCase()) === 0
+            );
 
             if (redirect) {
                 const target = `http://${redirect.service}:${redirect.port}`;
