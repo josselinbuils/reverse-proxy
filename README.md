@@ -11,9 +11,9 @@ Configuration example:
       "https": true,
       "forceHttps": true,
       "redirects": [{
-				"path": "/api",
-				"service": "dockerComposeService1",
-				"port": 9000
+        "path": "/api",
+        "service": "dockerComposeService1",
+        "port": 9000
       }, {
         "path": "*",
         "service": "dockerComposeService2",
