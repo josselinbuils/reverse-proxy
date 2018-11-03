@@ -1,16 +1,16 @@
 {
-  "name": "ReverseProxy",
+  "name": "reverse-proxy",
   "version": "0.0.1",
   "scripts": {
-    "start": "node --harmony index"
+    "start": "node index"
   },
   "dependencies": {
-    "express": "^4.15.5",
-    "greenlock-express": "^2.0.11",
-    "helmet": "3.8.1",
-    "http-proxy": "1.16.2",
+    "express": "^4.16.4",
+    "greenlock-express": "^2.4.6",
+    "helmet": "3.14.0",
+    "http-proxy": "1.17.0",
     "le-challenge-fs": "^2.0.8",
-    "le-store-certbot": "^2.0.5",
+    "le-store-certbot": "^2.2.0",
     "spdy": "3.4.7"
   }
 }
