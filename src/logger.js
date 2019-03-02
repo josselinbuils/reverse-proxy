@@ -1,4 +1,4 @@
-module.exports = class Logger {
+module.exports.Logger = class Logger {
   static error(str) {
     log('ERROR', str);
   }

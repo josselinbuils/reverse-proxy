@@ -379,6 +379,11 @@ ipaddr.js@1.8.0:
   resolved "https://registry.yarnpkg.com/ipaddr.js/-/ipaddr.js-1.8.0.tgz#eaa33d6ddd7ace8f7f6fe0c9ca0440e706738b1e"
   integrity sha1-6qM9bd16zo9/b+DJygRA5wZzix4=
 
+jsonschema@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/jsonschema/-/jsonschema-1.2.4.tgz#a46bac5d3506a254465bc548876e267c6d0d6464"
+  integrity sha512-lz1nOH69GbsVHeVgEdvyavc/33oymY1AZwtePMiMj4HZPMbP5OIKK3zT9INMWjwua/V4Z4yq7wSlBbSG+g4AEw==
+
 le-challenge-fs@^2.0.2, le-challenge-fs@^2.0.8:
   version "2.0.8"
   resolved "https://registry.yarnpkg.com/le-challenge-fs/-/le-challenge-fs-2.0.8.tgz#b6d458a37f097e87df3d8b5ff67013737ab9d5a2"
