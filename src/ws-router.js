@@ -12,7 +12,7 @@ module.exports.wsRouter = config => wsClient => {
   const hostConfig = getHostConfig(hosts, hostname);
 
   if (!hostConfig) {
-    return client.close(FORBIDDEN, 'Unknown host');
+    return wsClient.close(FORBIDDEN, 'Unknown host');
   }
 
   const target = getTarget(hostConfig, protocol, path);
@@ -24,12 +24,12 @@ module.exports.wsRouter = config => wsClient => {
     const wsProxy = new WebSocket(target);
 
     wsProxy.on('open', () => {
-      wsClient.on('message', wsProxy.send);
-      wsProxy.on('message', wsClient.send);
+      wsClient.on('message', data => wsProxy.send(data));
+      wsProxy.on('message', data => wsClient.send(data));
     });
 
-    wsClient.on('close', wsProxy.close);
-    wsProxy.on('close', wsClient.close);
+    wsClient.on('close', () => wsProxy.close());
+    wsProxy.on('close', () => wsClient.close());
 
   } else {
     Logger.info(`No WebSocket route found: ${request}`);
