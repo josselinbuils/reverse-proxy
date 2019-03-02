@@ -20,7 +20,7 @@ const { wsRouter } = require('./ws-router');
 const HTTP_PORT = 80;
 const HTTPS_PORT = 443;
 
-const config = validate(rawConfig, configSchema, { throwError: true }).instance;
+const hosts = validate(rawConfig, configSchema, { throwError: true }).instance;
 
 Logger.info('Starts ReverseProxy');
 
@@ -49,7 +49,7 @@ const lex = LEX.create({
 
       options.domains = [hostname];
       options.email = 'josselin.buils@gmail.com';
-      options.agreeTos = isHTTPS(config.hosts, hostname);
+      options.agreeTos = isHTTPS(hosts, hostname);
 
       Logger.info(`Approve registration for domain ${hostname}: ${options.agreeTos}`);
     }
@@ -59,7 +59,7 @@ const lex = LEX.create({
 
 const app = express()
   .use(helmet())
-  .use(httpRouter(config));
+  .use(httpRouter(hosts));
 
 http
   .createServer(lex.middleware(app))
@@ -72,4 +72,4 @@ const httpsServer = https
 new ws.Server(
   { server: httpsServer },
   () => Logger.info(`ReverseProxy server is listening on port ${HTTPS_PORT} for WSS protocol`),
-).on('connection', wsRouter(config));
+).on('connection', wsRouter(hosts));
