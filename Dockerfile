@@ -1,5 +1,5 @@
-FROM node:8
+FROM node:10
 COPY . reverse-proxy
 WORKDIR reverse-proxy
-RUN npm install --production
-CMD ["npm", "start"]
+RUN yarn install --production --frozen-lockfile
+CMD ["yarn", "start"]
