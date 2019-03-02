@@ -1,7 +1,7 @@
 const WebSocket = require('ws');
 
 const { Logger } = require('./logger');
-const { getHostConfig, getTarget } = require('./routing-helpers');
+const { getRedirects, getTarget } = require('./routing-helpers');
 
 module.exports.wsRouter = hosts => (wsClient, req) => {
   const { connection, url } = req;
@@ -10,14 +10,14 @@ module.exports.wsRouter = hosts => (wsClient, req) => {
   const hostname = connection.servername;
   const path = url;
 
-  const hostConfig = getHostConfig(hosts, hostname);
+  const redirects = getRedirects(hosts, hostname);
 
-  if (!hostConfig) {
+  if (!redirects) {
     wsClient.send('Unknown host');
     return wsClient.close();
   }
 
-  const target = getTarget(hostConfig, 'wss', path);
+  const target = getTarget(redirects, 'wss', path);
   const request = `wss://${hostname}${path}`;
 
   if (target) {

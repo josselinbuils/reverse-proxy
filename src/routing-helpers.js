@@ -1,16 +1,14 @@
 module.exports = {
-  getHostConfig,
+  getRedirects,
   getTarget,
-  isHTTPS,
 };
 
-function getHostConfig(hosts, hostname) {
+function getRedirects(hosts, hostname) {
   return hosts[/^www\./.test(hostname) ? hostname.slice(4) : hostname];
 }
 
-function getTarget(hostConfig, protocol, path) {
-  const redirect = hostConfig.redirects
-    .find(redirect => path.toLowerCase().indexOf(redirect.path.toLowerCase()) === 0);
+function getTarget(redirects, protocol, path) {
+  const redirect = redirects.find(redirect => path.toLowerCase().indexOf(redirect.path.toLowerCase()) === 0);
 
   if (redirect === undefined) {
     return undefined;
@@ -34,9 +32,4 @@ function getTarget(hostConfig, protocol, path) {
     default:
       throw new Error('Invalid protocol');
   }
-}
-
-function isHTTPS(hosts, hostname) {
-  const hostConfig = getHostConfig(hosts, hostname);
-  return hostConfig && hostConfig.https;
 }

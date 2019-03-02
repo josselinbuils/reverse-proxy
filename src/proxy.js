@@ -14,7 +14,6 @@ const configSchema = require('../config.schema');
 
 const { httpRouter } = require('./http-router');
 const { Logger } = require('./logger');
-const { isHTTPS } = require('./routing-helpers');
 const { wsRouter } = require('./ws-router');
 
 const HTTP_PORT = 80;
@@ -49,7 +48,7 @@ const lex = LEX.create({
 
       options.domains = [hostname];
       options.email = 'josselin.buils@gmail.com';
-      options.agreeTos = isHTTPS(hosts, hostname);
+      options.agreeTos = true;
 
       Logger.info(`Approve registration for domain ${hostname}: ${options.agreeTos}`);
     }

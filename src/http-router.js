@@ -1,7 +1,7 @@
 const httpProxy = require('http-proxy');
 
 const { Logger } = require('./logger');
-const { getHostConfig, getTarget } = require('./routing-helpers');
+const { getRedirects, getTarget } = require('./routing-helpers');
 
 const FORBIDDEN = 403;
 const NOT_FOUND = 404;
@@ -13,9 +13,9 @@ module.exports.httpRouter = hosts => {
 
   return (req, res) => {
     const { hostname, method, path, protocol } = req;
-    const hostConfig = getHostConfig(hosts, hostname);
+    const redirects = getRedirects(hosts, hostname);
 
-    if (!hostConfig) {
+    if (!redirects) {
       return res.status(FORBIDDEN).end('Unknown host');
     }
 
@@ -26,7 +26,7 @@ module.exports.httpRouter = hosts => {
       return res.redirect(newUrl);
     }
 
-    const target = getTarget(hostConfig, protocol, path);
+    const target = getTarget(redirects, protocol, path);
     const request = `${protocol}://${hostname}${path}`;
 
     if (target) {
