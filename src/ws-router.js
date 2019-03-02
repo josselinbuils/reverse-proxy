@@ -7,6 +7,8 @@ const FORBIDDEN = 403;
 const NOT_FOUND = 404;
 
 module.exports.wsRouter = config => wsClient => {
+  console.log(wsClient);
+
   const { hosts } = config;
   const { hostname, path, protocol } = getClientInfo(wsClient);
   const hostConfig = getHostConfig(hosts, hostname);
