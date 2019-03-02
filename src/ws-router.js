@@ -3,15 +3,13 @@ const WebSocket = require('ws');
 const { Logger } = require('./logger');
 const { getHostConfig, getTarget } = require('./routing-helpers');
 
-const FORBIDDEN = 403;
-const NOT_FOUND = 404;
+module.exports.wsRouter = hosts => (wsClient, req) => {
+  const { connection, url } = req;
 
-module.exports.wsRouter = config => (wsClient, req) => {
-  const { hosts } = config;
-  const { hostname, path, protocol } = req;
-  console.log(req);
-  console.log('\n\n');
-  console.log(hostname, path, protocol);
+  // Keep same names than in http router to ensure coherence
+  const hostname = connection.servername;
+  const path = url;
+
   const hostConfig = getHostConfig(hosts, hostname);
 
   if (!hostConfig) {
@@ -19,8 +17,8 @@ module.exports.wsRouter = config => (wsClient, req) => {
     return wsClient.close();
   }
 
-  const target = getTarget(hostConfig, protocol, path);
-  const request = `${protocol}://${hostname}${path}`;
+  const target = getTarget(hostConfig, 'wss', path);
+  const request = `wss://${hostname}${path}`;
 
   if (target) {
     Logger.info(`${request} -> ${target}`);

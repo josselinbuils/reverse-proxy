@@ -19,14 +19,12 @@ function getTarget(hostConfig, protocol, path) {
   const { service, httpPort, wsPort } = redirect;
 
   switch (protocol.toLowerCase()) {
-    case 'http':
     case 'https':
       if (httpPort !== undefined) {
         return `http://${service}:${httpPort}`;
       }
       break;
 
-    case 'ws':
     case 'wss':
       if (wsPort !== undefined) {
         return `ws://${service}:${wsPort}`;
@@ -34,7 +32,7 @@ function getTarget(hostConfig, protocol, path) {
       break;
 
     default:
-      throw new Error('Unknown protocol');
+      throw new Error('Invalid protocol');
   }
 }
 

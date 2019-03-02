@@ -1,34 +1,21 @@
 {
   "id": "/Config",
   "type": "object",
-  "properties": {
-    "hosts": {
-      "type": "object",
-      "patternProperties": {
-        ".*": {
-          "type": "object",
-          "properties": {
-            "forceHttps": {"type": "boolean"},
-            "https": {"type": "boolean"},
-            "redirects": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "path": {"type": "string"},
-                  "service": {"type": "string"},
-                  "httpPort": {"type": "number"},
-                  "wsPort": {"type": "number"}
-                },
-                "anyOf": [
-                  {"required": ["path", "service", "httpPort"]},
-                  {"required": ["path", "service", "wsPort"]}
-                ]
-              }
-            }
-          },
-          "required": ["redirects"]
-        }
+  "patternProperties": {
+    ".*": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {"type": "string"},
+          "service": {"type": "string"},
+          "httpPort": {"type": "number"},
+          "wsPort": {"type": "number"}
+        },
+        "anyOf": [
+          {"required": ["path", "service", "httpPort"]},
+          {"required": ["path", "service", "wsPort"]}
+        ]
       }
     }
   },

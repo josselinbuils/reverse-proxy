@@ -6,28 +6,24 @@ Configuration example:
 
 ```json
 {
-  "hosts": {
-    "google.com": {
-      "https": true,
-      "forceHttps": true,
-      "redirects": [{
-        "path": "/api",
-        "service": "dockerComposeService1",
-        "port": 9000
-      }, {
-        "path": "*",
-        "service": "dockerComposeService2",
-        "port": 9001
-      }]
+  "google.com": [
+    {
+      "path": "/api",
+      "service": "dockerComposeService1",
+      "httpPort": 9000
     },
-    "myanimelist.net": {
-      "https": false,
-      "redirects": [{
-        "path": "*",
-        "service": "dockerComposeService3",
-        "port": 9002
-      }]
+    {
+      "path": "*",
+      "service": "dockerComposeService2",
+      "httpPort": 9001
     }
-  }
+  ],
+  "myanimelist.net": [
+    {
+      "path": "*",
+      "service": "dockerComposeService3",
+      "wsPort": 9002
+    }
+  ]
 }
 ```

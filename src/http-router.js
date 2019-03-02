@@ -6,8 +6,7 @@ const { getHostConfig, getTarget } = require('./routing-helpers');
 const FORBIDDEN = 403;
 const NOT_FOUND = 404;
 
-module.exports.httpRouter = config => {
-  const { hosts } = config;
+module.exports.httpRouter = hosts => {
   const proxy = httpProxy.createProxyServer({});
 
   proxy.on('error', error => Logger.error(`Proxy error: ${error.message}`));
@@ -20,7 +19,7 @@ module.exports.httpRouter = config => {
       return res.status(FORBIDDEN).end('Unknown host');
     }
 
-    if (protocol !== 'https' && hostConfig.https && hostConfig.forceHttps) {
+    if (protocol !== 'https') {
       const newUrl = `https://${hostname}${url}`;
       Logger.info(hostname + ' is a HTTPS only domain, use HTTPS instead of HTTP');
       Logger.info(`Redirect from ${protocol}://${hostname}${url} to ${newUrl}`);
