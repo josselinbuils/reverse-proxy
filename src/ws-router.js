@@ -26,8 +26,8 @@ module.exports.wsRouter = hosts => (wsClient, req) => {
     const wsProxy = new WebSocket(target);
 
     wsProxy.on('open', () => {
-      wsClient.on('message', data => wsProxy.send(data));
-      wsProxy.on('message', data => wsClient.send(data));
+      wsClient.on('message', event => wsProxy.send(event.data));
+      wsProxy.on('message', event => wsClient.send(event.data));
     });
 
     wsClient.on('close', () => wsProxy.close());
