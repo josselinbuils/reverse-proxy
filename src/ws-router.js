@@ -6,11 +6,9 @@ const { getHostConfig, getTarget } = require('./routing-helpers');
 const FORBIDDEN = 403;
 const NOT_FOUND = 404;
 
-module.exports.wsRouter = config => wsClient => {
-  console.log(wsClient);
-
+module.exports.wsRouter = config => (wsClient, req) => {
   const { hosts } = config;
-  const { hostname, path, protocol } = getClientInfo(wsClient);
+  const { hostname, path, protocol } = req;
   const hostConfig = getHostConfig(hosts, hostname);
 
   if (!hostConfig) {
@@ -38,17 +36,3 @@ module.exports.wsRouter = config => wsClient => {
     return wsClient.close(NOT_FOUND);
   }
 };
-
-function getClientInfo(wsClient) {
-  const match = wsClient.url.match(/^(.+):\/\/(www\.)?([^/]+)(:[^/]+)?(.*)$/);
-
-  if (match === null) {
-    throw new Error('Unable to retrieve WebSocket client info');
-  }
-
-  return {
-    hostname: match[3],
-    path: match[5],
-    protocol: match[1],
-  };
-}
