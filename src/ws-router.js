@@ -9,10 +9,14 @@ const NOT_FOUND = 404;
 module.exports.wsRouter = config => (wsClient, req) => {
   const { hosts } = config;
   const { hostname, path, protocol } = req;
+  console.log(req);
+  console.log('\n\n');
+  console.log(hostname, path, protocol);
   const hostConfig = getHostConfig(hosts, hostname);
 
   if (!hostConfig) {
-    return wsClient.close(FORBIDDEN, 'Unknown host');
+    wsClient.send('Unknown host');
+    return wsClient.close();
   }
 
   const target = getTarget(hostConfig, protocol, path);
@@ -33,6 +37,7 @@ module.exports.wsRouter = config => (wsClient, req) => {
 
   } else {
     Logger.info(`No WebSocket route found: ${request}`);
-    return wsClient.close(NOT_FOUND);
+    wsClient.send('Not found');
+    return wsClient.close();
   }
 };
