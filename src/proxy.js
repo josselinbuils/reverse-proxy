@@ -1,10 +1,14 @@
 const express = require('express');
+const LEX = require('greenlock-express');
 const helmet = require('helmet');
 const http = require('http');
 const https = require('https');
 const leChallengeFs = require('le-challenge-fs');
 const leStoreCertbot = require('le-store-certbot');
-const LEX = require('greenlock-express');
+const ws = require('ws');
+
+const HTTP_PORT = 80;
+const HTTPS_PORT = 443;
 
 const Logger = require('./logger');
 const Router = require('./router');
@@ -55,12 +59,9 @@ app.use(Router.route);
 
 http
   .createServer(lex.middleware(app))
-  .listen(80, function () {
-    Logger.info(`ReverseProxy is listening on port ${this.address().port} for HTTP protocol`);
-  });
+  .listen(HTTP_PORT, () => Logger.info(`ReverseProxy is listening on port ${HTTP_PORT} for HTTP protocol`));
 
-https
-  .createServer(lex.httpsOptions, lex.middleware(app))
-  .listen(443, function () {
-    Logger.info(`ReverseProxy is listening on port ${this.address().port} for HTTPS protocol`);
-  });
+const httpsServer = https.createServer(lex.httpsOptions, lex.middleware(app));
+httpsServer.listen(HTTPS_PORT, () => Logger.info(`ReverseProxy is listening on port ${HTTPS_PORT} for HTTPS protocol`));
+
+new ws.Server({ server: httpsServer }, () => Logger.info(`ReverseProxy server is listening on port ${HTTPS_PORT} for WSS protocol`));
