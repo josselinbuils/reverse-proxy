@@ -5,8 +5,9 @@ const http = require('http');
 const https = require('https');
 const { validate } = require('jsonschema');
 const leChallengeFs = require('le-challenge-fs');
-const leStoreCertbot = require('le-store-certbot');
-const ws = require('ws');
+const leStoreCertBot = require('le-store-certbot');
+const { TLSSocket } = require('tls');
+const WsServer = require('ws').Server;
 
 // noinspection JSFileReferences
 const rawConfig = require('../config');
@@ -30,7 +31,7 @@ const lex = LEX.create({
     'http-01': leChallengeFs.create({}),
     'tls-sni-01': leChallengeFs.create({}),
   },
-  store: leStoreCertbot.create({
+  store: leStoreCertBot.create({
     configDir: '/letsencrypt/etc',
     privkeyPath: ':configDir/live/:hostname/privkey.pem',
     fullchainPath: ':configDir/live/:hostname/fullchain.pem',
@@ -68,7 +69,14 @@ const httpsServer = https
   .createServer(lex.httpsOptions, lex.middleware(app))
   .listen(HTTPS_PORT, () => Logger.info(`ReverseProxy is listening on port ${HTTPS_PORT} for HTTPS protocol`));
 
-new ws.Server(
+httpsServer.on('upgrade', (request, socket) => {
+  if (!(socket instanceof TLSSocket)) {
+    Logger.error(`Non-secure websocket connection received from ${request.headers.origin}, reject it`);
+    socket.destroy();
+  }
+});
+
+new WsServer(
   { server: httpsServer },
   () => Logger.info(`ReverseProxy server is listening on port ${HTTPS_PORT} for WSS protocol`),
 ).on('connection', wsRouter(hosts));
