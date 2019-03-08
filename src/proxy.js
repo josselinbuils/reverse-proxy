@@ -69,14 +69,12 @@ const httpsServer = https
   .createServer(lex.httpsOptions, lex.middleware(app))
   .listen(HTTPS_PORT, () => Logger.info(`ReverseProxy is listening on port ${HTTPS_PORT} for HTTPS protocol`));
 
-const verifyClient = ({ origin, secure }, callback) => {
-  if (!secure) {
+new WsServer({
+  server: httpServer,
+  verifyClient: ({ origin }, callback) => {
     Logger.error(`Non-secure websocket connection received from ${origin}, reject it`);
-  }
-  callback(secure, IM_A_TEAPOT);
-};
+    callback(false, IM_A_TEAPOT);
+  },
+});
 
-new WsServer({ server: httpServer, verifyClient });
-
-new WsServer({ server: httpsServer, verifyClient })
-  .on('connection', wsRouter(hosts));
+new WsServer({ server: httpsServer }).on('connection', wsRouter(hosts));
