@@ -61,11 +61,11 @@ const app = express()
   .use(helmet())
   .use(httpRouter(hosts));
 
-http
+const httpsServer = http
   .createServer(lex.middleware(app))
   .listen(HTTP_PORT, () => Logger.info(`ReverseProxy is listening on port ${HTTP_PORT} for HTTP protocol`));
 
-const httpsServer = https
+https
   .createServer(lex.httpsOptions, lex.middleware(app))
   .listen(HTTPS_PORT, () => Logger.info(`ReverseProxy is listening on port ${HTTPS_PORT} for HTTPS protocol`));
 
