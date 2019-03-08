@@ -12,16 +12,11 @@ module.exports.httpRouter = hosts => {
   proxy.on('error', error => Logger.error(`Proxy error: ${error.message}`));
 
   return (req, res) => {
-    const { headers, hostname, method, protocol, url } = req;
+    const { hostname, method, protocol, url } = req;
     const redirects = getRedirects(hosts, hostname);
 
     if (!redirects) {
       return res.status(FORBIDDEN).end('Unknown host');
-    }
-
-    if (headers.upgrade === 'websocket') {
-      // Status text not handled by browsers
-      return res.status(FORBIDDEN);
     }
 
     if (protocol !== 'https') {
