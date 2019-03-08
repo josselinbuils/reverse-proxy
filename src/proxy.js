@@ -6,7 +6,6 @@ const https = require('https');
 const { validate } = require('jsonschema');
 const leChallengeFs = require('le-challenge-fs');
 const leStoreCertBot = require('le-store-certbot');
-const { TLSSocket } = require('tls');
 const WsServer = require('ws').Server;
 
 // noinspection JSFileReferences
@@ -61,23 +60,20 @@ const app = express()
   .use(helmet())
   .use(httpRouter(hosts));
 
-const httpsServer = http
+http
   .createServer(lex.middleware(app))
   .listen(HTTP_PORT, () => Logger.info(`ReverseProxy is listening on port ${HTTP_PORT} for HTTP protocol`));
 
-https
+const server = https
   .createServer(lex.httpsOptions, lex.middleware(app))
   .listen(HTTPS_PORT, () => Logger.info(`ReverseProxy is listening on port ${HTTPS_PORT} for HTTPS protocol`));
 
-httpsServer.on('upgrade', (request, socket) => {
-  console.log(socket instanceof TLSSocket, socket.ssl, socket.isSSL);
-  if (!(socket instanceof TLSSocket)) {
-    Logger.error(`Non-secure websocket connection received from ${request.headers.origin}, reject it`);
-    socket.destroy();
-  }
-});
-
-new WsServer(
-  { server: httpsServer },
-  () => Logger.info(`ReverseProxy server is listening on port ${HTTPS_PORT} for WSS protocol`),
-).on('connection', wsRouter(hosts));
+new WsServer({
+  server,
+  verifyClient: ({req, secure}) => {
+    if (!secure) {
+      Logger.error(`Non-secure websocket connection received from ${req.headers.origin}, reject it`);
+    }
+    return secure;
+  },
+}).on('connection', wsRouter(hosts));
