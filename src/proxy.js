@@ -70,6 +70,7 @@ const httpsServer = https
   .listen(HTTPS_PORT, () => Logger.info(`ReverseProxy is listening on port ${HTTPS_PORT} for HTTPS protocol`));
 
 httpsServer.on('upgrade', (request, socket) => {
+  console.log(socket instanceof TLSSocket);
   if (!(socket instanceof TLSSocket)) {
     Logger.error(`Non-secure websocket connection received from ${request.headers.origin}, reject it`);
     socket.destroy();
