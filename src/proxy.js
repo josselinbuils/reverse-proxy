@@ -61,20 +61,22 @@ const app = express()
   .use(helmet())
   .use(httpRouter(hosts));
 
-http
+const httpServer = http
   .createServer(lex.middleware(app))
   .listen(HTTP_PORT, () => Logger.info(`ReverseProxy is listening on port ${HTTP_PORT} for HTTP protocol`));
 
-const server = https
+const httpsServer = https
   .createServer(lex.httpsOptions, lex.middleware(app))
   .listen(HTTPS_PORT, () => Logger.info(`ReverseProxy is listening on port ${HTTPS_PORT} for HTTPS protocol`));
 
-new WsServer({
-  server,
-  verifyClient: ({ origin, secure }, callback) => {
-    if (!secure) {
-      Logger.error(`Non-secure websocket connection received from ${origin}, reject it`);
-    }
-    callback(secure, IM_A_TEAPOT);
-  },
-}).on('connection', wsRouter(hosts));
+const verifyClient = ({ origin, secure }, callback) => {
+  if (!secure) {
+    Logger.error(`Non-secure websocket connection received from ${origin}, reject it`);
+  }
+  callback(secure, IM_A_TEAPOT);
+};
+
+new WsServer({ server: httpServer, verifyClient });
+
+new WsServer({ server: httpsServer, verifyClient })
+  .on('connection', wsRouter(hosts));
