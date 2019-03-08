@@ -18,7 +18,7 @@ const { wsRouter } = require('./ws-router');
 
 const HTTP_PORT = 80;
 const HTTPS_PORT = 443;
-const UNAUTHORIZED = 401;
+const IM_A_TEAPOT = 418;
 
 const hosts = validate(rawConfig, configSchema, { throwError: true }).instance;
 
@@ -71,10 +71,10 @@ const server = https
 
 new WsServer({
   server,
-  verifyClient: ({origin, secure}, callback) => {
+  verifyClient: ({ origin, secure }, callback) => {
     if (!secure) {
-      Logger.error(`Non-secure websocket connection received from ${origin.headers.origin}, reject it`);
+      Logger.error(`Non-secure websocket connection received from ${origin}, reject it`);
     }
-    callback(secure, UNAUTHORIZED, 'Only secure websocket connections are allowed');
+    callback(secure, IM_A_TEAPOT);
   },
 }).on('connection', wsRouter(hosts));
