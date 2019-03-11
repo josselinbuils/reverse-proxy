@@ -1,0 +1,9 @@
+{
+  "ENV_DEV": "development",
+  "ENV_PROD": "production",
+  "FORBIDDEN": 403,
+  "HTTP_PORT": 8080,
+  "HTTPS_PORT": 8081,
+  "LOCALHOST": "localhost",
+  "NOT_FOUND": 404
+}

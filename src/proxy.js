@@ -8,18 +8,15 @@ const leChallengeFs = require('le-challenge-fs');
 const leStoreCertBot = require('le-store-certbot');
 const WsServer = require('ws').Server;
 
-// noinspection JSFileReferences
 const rawConfig = require('../config');
 const configSchema = require('../config.schema');
 
+const { ENV_DEV, FORBIDDEN, HTTP_PORT, HTTPS_PORT, LOCALHOST } = require('./constants');
 const { httpRouter } = require('./http-router');
 const { Logger } = require('./logger');
 const { wsRouter } = require('./ws-router');
 
-const FORBIDDEN = 403;
-const HTTP_PORT = 80;
-const HTTPS_PORT = 443;
-
+const ENV = process.env.NODE_ENV || ENV_DEV;
 const hosts = validate(rawConfig, configSchema, { throwError: true }).instance;
 
 Logger.info('Starts ReverseProxy');
@@ -71,7 +68,13 @@ const httpsServer = https
 
 new WsServer({
   server: httpServer,
-  verifyClient: ({ origin }, callback) => {
+  verifyClient: ({ req, origin }, callback) => {
+
+    // Allow request from localhost for dev purpose
+    if (ENV === ENV_DEV && req.headers.host.indexOf(LOCALHOST) === 0) {
+      return callback(true);
+    }
+
     Logger.error(`Non-secure websocket connection received from ${origin}, reject it`);
     callback(false, FORBIDDEN);
   },

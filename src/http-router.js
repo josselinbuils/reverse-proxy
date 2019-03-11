@@ -1,10 +1,10 @@
 const httpProxy = require('http-proxy');
 
+const { ENV_DEV, ENV_PROD, FORBIDDEN, NOT_FOUND } = require('./constants');
 const { Logger } = require('./logger');
 const { getRedirects, getTarget } = require('./routing-helpers');
 
-const FORBIDDEN = 403;
-const NOT_FOUND = 404;
+const ENV = process.env.NODE_ENV || ENV_DEV;
 
 module.exports.httpRouter = hosts => {
   const proxy = httpProxy.createProxyServer({});
@@ -19,7 +19,8 @@ module.exports.httpRouter = hosts => {
       return res.status(FORBIDDEN).end('Unknown host');
     }
 
-    if (protocol !== 'https') {
+    // Allows HTTP only in dev environment
+    if (protocol !== 'https' && ENV === ENV_PROD) {
       const newUrl = `https://${hostname}${url}`;
       Logger.info(hostname + ' is a HTTPS only domain, use HTTPS instead of HTTP');
       Logger.info(`Redirect from ${protocol}://${hostname}${url} to ${newUrl}`);
