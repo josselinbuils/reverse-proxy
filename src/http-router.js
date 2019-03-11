@@ -1,13 +1,16 @@
+const { Agent } = require('http');
 const httpProxy = require('http-proxy');
 
-const { ENV_DEV, ENV_PROD, FORBIDDEN, INTERNAL_ERROR, NOT_FOUND } = require('./constants');
+const { ENV_DEV, ENV_PROD, FORBIDDEN, INTERNAL_ERROR, KEEP_ALIVE_MS, NOT_FOUND } = require('./constants');
 const { Logger } = require('./logger');
 const { getRedirects, getTarget } = require('./routing-helpers');
 
 const ENV = process.env.NODE_ENV || ENV_DEV;
 
 module.exports.httpRouter = hosts => {
-  const proxy = httpProxy.createProxyServer({});
+  const proxy = httpProxy.createProxyServer({
+    agent: new Agent({ keepAlive: true, keepAliveMsecs: KEEP_ALIVE_MS }),
+  });
 
   proxy.on('error', error => Logger.error(`Proxy error: ${error.message}`));
 
