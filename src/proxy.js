@@ -1,4 +1,5 @@
 const express = require('express');
+const contentLength = require('express-content-length-validator');
 const LEX = require('greenlock-express');
 const helmet = require('helmet');
 const http = require('http');
@@ -11,7 +12,7 @@ const WsServer = require('ws').Server;
 const rawConfig = require('../config');
 const configSchema = require('../config.schema');
 
-const { ENV_DEV, FORBIDDEN, HTTP_PORT, HTTPS_PORT, LOCALHOST } = require('./constants');
+const { ENV_DEV, FORBIDDEN, HTTP_PORT, HTTPS_PORT, LOCALHOST, MAX_CONTENT_LENGTH } = require('./constants');
 const { httpRouter } = require('./http-router');
 const { Logger } = require('./logger');
 const { wsRouter } = require('./ws-router');
@@ -56,7 +57,8 @@ const lex = LEX.create({
 
 const app = express()
   .use(helmet())
-  .use(httpRouter(hosts));
+  .use(httpRouter(hosts))
+  .use(contentLength.validateMax({ max: MAX_CONTENT_LENGTH }));
 
 const httpServer = http
   .createServer(lex.middleware(app))

@@ -182,6 +182,11 @@ expect-ct@0.1.1:
   resolved "https://registry.yarnpkg.com/expect-ct/-/expect-ct-0.1.1.tgz#de84476a2dbcb85000d5903737e9bc8a5ba7b897"
   integrity sha512-ngXzTfoRGG7fYens3/RMb6yYoVLvLMfmsSllP/mZPxNHgFq41TmPSLF/nLY7fwoclI2vElvAmILFWGUYqdjfCg==
 
+express-content-length-validator@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/express-content-length-validator/-/express-content-length-validator-1.0.0.tgz#0fc842bfb2d53380ff25520f789b47f20267ff31"
+  integrity sha1-D8hCv7LVM4D/JVIPeJtH8gJn/zE=
+
 express@^4.16.4:
   version "4.16.4"
   resolved "https://registry.yarnpkg.com/express/-/express-4.16.4.tgz#fddef61926109e24c515ea97fd2f1bdbf62df12e"
