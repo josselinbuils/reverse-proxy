@@ -17,6 +17,7 @@ function getTarget(redirects, protocol, path) {
   const { service, httpPort, wsPort } = redirect;
 
   switch (protocol.toLowerCase()) {
+    case 'http':
     case 'https':
       if (httpPort !== undefined) {
         return `http://${service}:${httpPort}`;
