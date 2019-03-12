@@ -1,3 +1,4 @@
+const compression = require('compression');
 const express = require('express');
 const contentLength = require('express-content-length-validator');
 const LEX = require('greenlock-express');
@@ -58,7 +59,8 @@ const lex = LEX.create({
 const app = express()
   .use(helmet())
   .use(httpRouter(hosts))
-  .use(contentLength.validateMax({ max: MAX_CONTENT_LENGTH }));
+  .use(contentLength.validateMax({ max: MAX_CONTENT_LENGTH }))
+  .use(compression());
 
 const httpServer = http
   .createServer(lex.middleware(app))

@@ -5,6 +5,7 @@
     "start": "node index"
   },
   "dependencies": {
+    "compression": "^1.7.3",
     "express": "^4.16.4",
     "express-content-length-validator": "^1.0.0",
     "greenlock-express": "^2.4.6",
