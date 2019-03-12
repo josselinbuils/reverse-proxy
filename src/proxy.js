@@ -58,9 +58,9 @@ const lex = LEX.create({
 
 const app = express()
   .use(helmet())
-  .use(httpRouter(hosts))
   .use(contentLength.validateMax({ max: MAX_CONTENT_LENGTH }))
-  .use(compression());
+  .use(compression())
+  .use(httpRouter(hosts));
 
 const httpServer = http
   .createServer(lex.middleware(app))
