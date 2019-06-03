@@ -5,15 +5,15 @@
     "start": "node index"
   },
   "dependencies": {
-    "compression": "^1.7.3",
-    "express": "^4.16.4",
+    "compression": "^1.7.4",
+    "express": "^4.17.1",
     "express-content-length-validator": "^1.0.0",
-    "greenlock-express": "^2.4.6",
-    "helmet": "3.15.1",
+    "greenlock-express": "^2.7.9",
+    "helmet": "3.18.0",
     "http-proxy": "1.17.0",
     "jsonschema": "^1.2.4",
-    "le-challenge-fs": "^2.0.8",
-    "le-store-certbot": "^2.2.0",
-    "ws": "^6.1.4"
+    "le-challenge-fs": "^2.0.9",
+    "le-store-certbot": "^2.2.3",
+    "ws": "^7.0.0"
   }
 }
