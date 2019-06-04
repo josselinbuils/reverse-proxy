@@ -15,5 +15,8 @@
     "le-challenge-fs": "^2.0.9",
     "le-store-certbot": "^2.2.3",
     "ws": "^7.0.0"
+  },
+  "prettier": {
+    "singleQuote": true
   }
 }

@@ -1,6 +1,6 @@
 module.exports = {
   getRedirects,
-  getTarget,
+  getTarget
 };
 
 function getRedirects(hosts, hostname) {
@@ -8,7 +8,9 @@ function getRedirects(hosts, hostname) {
 }
 
 function getTarget(redirects, protocol, path) {
-  const redirect = redirects.find(redirect => path.toLowerCase().indexOf(redirect.path.toLowerCase()) === 0);
+  const redirect = redirects.find(
+    redirect => path.toLowerCase().indexOf(redirect.path.toLowerCase()) === 0
+  );
 
   if (redirect === undefined) {
     return undefined;

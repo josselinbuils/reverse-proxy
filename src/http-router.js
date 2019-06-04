@@ -1,7 +1,13 @@
 const { Agent } = require('http');
 const httpProxy = require('http-proxy');
-
-const { ENV_DEV, ENV_PROD, FORBIDDEN, INTERNAL_ERROR, KEEP_ALIVE_MS, NOT_FOUND } = require('./constants');
+const {
+  ENV_DEV,
+  ENV_PROD,
+  FORBIDDEN,
+  INTERNAL_ERROR,
+  KEEP_ALIVE_MS,
+  NOT_FOUND
+} = require('./constants');
 const { Logger } = require('./logger');
 const { getRedirects, getTarget } = require('./routing-helpers');
 
@@ -9,7 +15,7 @@ const ENV = process.env.NODE_ENV || ENV_DEV;
 
 module.exports.httpRouter = hosts => {
   const proxy = httpProxy.createProxyServer({
-    agent: new Agent({ keepAlive: true, keepAliveMsecs: KEEP_ALIVE_MS }),
+    agent: new Agent({ keepAlive: true, keepAliveMsecs: KEEP_ALIVE_MS })
   });
 
   proxy.on('error', error => Logger.error(`Proxy error: ${error.message}`));
@@ -26,8 +32,12 @@ module.exports.httpRouter = hosts => {
       // Allows HTTP only in dev environment
       if (protocol !== 'https' && ENV === ENV_PROD) {
         const newUrl = `https://${hostname}${url}`;
-        Logger.info(hostname + ' is a HTTPS only domain, use HTTPS instead of HTTP');
-        Logger.info(`Redirect from ${protocol}://${hostname}${url} to ${newUrl}`);
+        Logger.info(
+          hostname + ' is a HTTPS only domain, use HTTPS instead of HTTP'
+        );
+        Logger.info(
+          `Redirect from ${protocol}://${hostname}${url} to ${newUrl}`
+        );
         return res.redirect(newUrl);
       }
 
