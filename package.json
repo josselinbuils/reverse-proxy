@@ -1,20 +1,47 @@
 {
   "name": "reverse-proxy",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "license": "MIT",
   "scripts": {
-    "start": "node index"
+    "add:staged": "exec-staged 'git add' '\\.(js|tsx?|scss)$'",
+    "build": "rimraf dist && tsc",
+    "lint": "tslint -p tsconfig.json",
+    "lint:staged": "exec-staged 'yarn lint' '\\.ts$'",
+    "prettier:staged": "exec-staged 'prettier --write' '\\.(js|ts)$'",
+    "start": "node dist/proxy.js",
+    "start:dev": "concurrently --kill-others 'yarn build -w' 'nodemon dist/proxy.js'"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint:staged && yarn prettier:staged && yarn add:staged"
+    }
   },
   "dependencies": {
+    "@types/compression": "^1.7.0",
+    "@types/helmet": "^0.0.45",
+    "@types/http-proxy": "^1.17.4",
+    "@types/node": "^13.9.8",
+    "@types/ws": "^7.2.3",
     "compression": "^1.7.4",
     "express": "^4.17.1",
-    "express-content-length-validator": "^1.0.0",
-    "greenlock-express": "^2.7.9",
-    "helmet": "3.18.0",
-    "http-proxy": "1.17.0",
-    "jsonschema": "^1.2.4",
+    "greenlock-express": "^4.0.3",
+    "helmet": "^3.22.0",
+    "http-proxy": "^1.18.0",
+    "jsonschema": "^1.2.6",
     "le-challenge-fs": "^2.0.9",
     "le-store-certbot": "^2.2.3",
-    "ws": "^7.0.0"
+    "rimraf": "^3.0.2",
+    "typescript": "^3.8.3",
+    "ws": "^7.2.3"
+  },
+  "devDependencies": {
+    "@josselinbuils/exec-staged": "^0.1.1",
+    "@josselinbuils/tslint": "^5.1.0",
+    "concurrently": "^5.1.0",
+    "husky": "^4.2.3",
+    "nodemon": "^2.0.2",
+    "prettier": "^2.0.2",
+    "tslint": "^6.1.0"
   },
   "prettier": {
     "singleQuote": true

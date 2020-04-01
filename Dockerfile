@@ -1,5 +1,10 @@
-FROM node:10
+FROM node:12
+
 COPY . reverse-proxy
+
 WORKDIR reverse-proxy
-RUN yarn install --production --frozen-lockfile
+
+RUN yarn install --production --frozen-lockfile && \
+    yarn build
+
 CMD ["yarn", "start"]

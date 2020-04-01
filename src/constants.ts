@@ -1,0 +1,9 @@
+export const ENV_DEV = 'development';
+export const ENV_PROD = 'production';
+export const FORBIDDEN = 403;
+export const HTTP_PORT = 80;
+export const HTTPS_PORT = 443;
+export const INTERNAL_ERROR = 500;
+export const KEEP_ALIVE_MS = 5000;
+export const LOCALHOST = 'localhost';
+export const NOT_FOUND = 404;

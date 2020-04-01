@@ -1,15 +1,12 @@
-module.exports = {
-  getRedirects,
-  getTarget
-};
+import { Redirect } from '../Redirect';
 
-function getRedirects(hosts, hostname) {
-  return hosts[/^www\./.test(hostname) ? hostname.slice(4) : hostname];
-}
-
-function getTarget(redirects, protocol, path) {
+export function getTarget(
+  redirects: Redirect[],
+  protocol: string,
+  path: string
+): string {
   const redirect = redirects.find(
-    redirect => path.toLowerCase().indexOf(redirect.path.toLowerCase()) === 0
+    (r) => path.toLowerCase().indexOf(r.path.toLowerCase()) === 0
   );
 
   if (redirect === undefined) {

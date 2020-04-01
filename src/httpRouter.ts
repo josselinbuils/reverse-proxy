@@ -1,26 +1,32 @@
-const { Agent } = require('http');
-const httpProxy = require('http-proxy');
-const {
+import { Request, Response } from 'express';
+import { Agent } from 'http';
+import httpProxy from 'http-proxy';
+import {
   ENV_DEV,
   ENV_PROD,
   FORBIDDEN,
   INTERNAL_ERROR,
   KEEP_ALIVE_MS,
-  NOT_FOUND
-} = require('./constants');
-const { Logger } = require('./logger');
-const { getRedirects, getTarget } = require('./routing-helpers');
+  NOT_FOUND,
+} from './constants';
+import { Logger } from './Logger';
+import { Redirect } from './Redirect';
+import { getRedirects, getTarget } from './utils';
 
 const ENV = process.env.NODE_ENV || ENV_DEV;
 
-module.exports.httpRouter = hosts => {
+export function httpRouter(hosts: {
+  [host: string]: Redirect[];
+}): (req: Request, res: Response) => void {
   const proxy = httpProxy.createProxyServer({
-    agent: new Agent({ keepAlive: true, keepAliveMsecs: KEEP_ALIVE_MS })
+    agent: new Agent({ keepAlive: true, keepAliveMsecs: KEEP_ALIVE_MS }),
   });
 
-  proxy.on('error', error => Logger.error(`Proxy error: ${error.message}`));
+  proxy.on('error', (error: Error) =>
+    Logger.error(`Proxy error: ${error.message}`)
+  );
 
-  return (req, res) => {
+  return (req: Request, res: Response) => {
     try {
       const { hostname, method, protocol, url } = req;
       const redirects = getRedirects(hosts, hostname);
@@ -33,7 +39,7 @@ module.exports.httpRouter = hosts => {
       if (protocol !== 'https' && ENV === ENV_PROD) {
         const newUrl = `https://${hostname}${url}`;
         Logger.info(
-          hostname + ' is a HTTPS only domain, use HTTPS instead of HTTP'
+          `${hostname} is a HTTPS only domain, use HTTPS instead of HTTP`
         );
         Logger.info(
           `Redirect from ${protocol}://${hostname}${url} to ${newUrl}`
@@ -56,4 +62,4 @@ module.exports.httpRouter = hosts => {
       res.status(INTERNAL_ERROR);
     }
   };
-};
+}
