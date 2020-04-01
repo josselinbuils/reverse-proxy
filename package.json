@@ -30,6 +30,7 @@
     "jsonschema": "^1.2.6",
     "le-challenge-fs": "^2.0.9",
     "le-store-certbot": "^2.2.3",
+    "le-store-fs": "^1.0.3",
     "rimraf": "^3.0.2",
     "typescript": "^3.8.3",
     "ws": "^7.2.3"

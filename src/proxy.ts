@@ -3,6 +3,7 @@ import express from 'express';
 import greenlockExpress from 'greenlock-express';
 import helmet from 'helmet';
 import { validate } from 'jsonschema';
+import leStoreFs from 'le-store-fs';
 import path from 'path';
 import { Server as WsServer } from 'ws';
 import configSchema from './config.schema.json';
@@ -33,6 +34,16 @@ greenlockExpress
     maintainerEmail: 'josselin.buils@gmail.com',
     packageRoot: process.cwd(),
     staging: ENV === ENV_DEV,
+    store: leStoreFs.create({
+      configDir: '/letsencrypt/etc',
+      privkeyPath: ':configDir/live/:hostname/privkey.pem',
+      fullchainPath: ':configDir/live/:hostname/fullchain.pem',
+      certPath: ':configDir/live/:hostname/cert.pem',
+      chainPath: ':configDir/live/:hostname/chain.pem',
+      workDir: '/letsencrypt/var/lib',
+      logsDir: '/letsencrypt/var/log',
+      webrootPath: '/letsencrypt/srv/www/:hostname/.well-known/acme-challenge',
+    }),
   })
   .ready((servers: any) => {
     const httpServer = servers
