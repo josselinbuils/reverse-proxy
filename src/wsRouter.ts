@@ -24,7 +24,7 @@ export function wsRouter(hosts: {
     if (target) {
       Logger.info(`${request} -> ${target}`);
 
-      const wsProxy = new WebSocket(target);
+      const wsProxy = new WebSocket(`${target}${url}`);
 
       wsProxy.on('open', () => {
         wsClient.on('message', (data) => wsProxy.send(data));
