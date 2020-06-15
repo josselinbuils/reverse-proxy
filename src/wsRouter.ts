@@ -22,7 +22,7 @@ export function wsRouter(hosts: {
     const request = `wss://${host}${url}`;
 
     if (target) {
-      Logger.info(`${request} -> ${target}`);
+      Logger.info(`${request} -> ${target}${url}`);
 
       const wsProxy = new WebSocket(`${target}${url}`);
 
