@@ -27,8 +27,12 @@ export function wsRouter(hosts: {
       const wsProxy = new WebSocket(`${target}${url}`);
 
       wsProxy.on('open', () => {
-        wsClient.on('message', (data) => wsProxy.send(data));
-        wsProxy.on('message', (data) => wsClient.send(data));
+        wsClient.on('message', (data, isBinary) =>
+          wsProxy.send(isBinary ? data : data.toString())
+        );
+        wsProxy.on('message', (data, isBinary) =>
+          wsClient.send(isBinary ? data : data.toString())
+        );
       });
 
       wsClient.on('close', () => wsProxy.close());
