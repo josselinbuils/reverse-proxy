@@ -25,7 +25,10 @@ const hosts = validate(rawConfig, configSchema, { throwError: true }).instance;
 
 Logger.info('Starts ReverseProxy');
 
-const app = express().use(helmet()).use(compression()).use(httpRouter(hosts));
+const app = express()
+  .use(helmet({ contentSecurityPolicy: false }))
+  .use(compression())
+  .use(httpRouter(hosts));
 
 greenlockExpress
   .init({
