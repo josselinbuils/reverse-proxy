@@ -1,3 +1,8 @@
+export enum LogLevel {
+  Error = 'ERROR',
+  Info = 'INFO',
+}
+
 export class Logger {
   static error(str: string): void {
     this.internalLog(LogLevel.Error, str);
@@ -23,9 +28,4 @@ export class Logger {
 
     console.log(`${prefix} ${str}\x1b[0m`);
   }
-}
-
-export enum LogLevel {
-  Error = 'ERROR',
-  Info = 'INFO',
 }

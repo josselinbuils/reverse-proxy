@@ -5,46 +5,52 @@
   "scripts": {
     "add:staged": "exec-staged 'git add' '\\.(js|tsx?|scss)$'",
     "build": "rimraf dist && tsc",
-    "lint": "tslint -p tsconfig.json",
-    "lint:staged": "exec-staged 'yarn lint' '\\.ts$'",
+    "dev": "concurrently --kill-others 'yarn build -w' 'wait-on dist/proxy.js && nodemon dist/proxy.js'",
+    "lint": "eslint .",
+    "pre-commit": "exec-staged",
+    "prepare": "husky install",
     "prettier:staged": "exec-staged 'prettier --write' '\\.(js|ts)$'",
-    "start": "node dist/proxy.js",
-    "start:dev": "concurrently --kill-others 'yarn build -w' 'nodemon dist/proxy.js'"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn lint:staged && yarn prettier:staged && yarn add:staged"
-    }
+    "start": "node dist/proxy.js"
   },
   "dependencies": {
-    "@types/compression": "^1.7.0",
-    "@types/helmet": "^0.0.45",
-    "@types/http-proxy": "^1.17.4",
-    "@types/node": "^13.9.8",
-    "@types/ws": "^7.2.3",
-    "compression": "^1.7.4",
-    "express": "^4.17.1",
-    "greenlock-express": "^4.0.3",
-    "helmet": "^3.22.0",
-    "http-proxy": "^1.18.0",
-    "jsonschema": "^1.2.6",
-    "le-challenge-fs": "^2.0.9",
-    "le-store-certbot": "^2.2.3",
-    "le-store-fs": "^1.0.3",
-    "rimraf": "^3.0.2",
-    "typescript": "^3.8.3",
-    "ws": "^7.2.3"
+    "@types/compression": "1.7.2",
+    "@types/http-proxy": "1.17.7",
+    "@types/node": "16.11.7",
+    "@types/ws": "8.2.0",
+    "@typescript-eslint/eslint-plugin": "5.3.1",
+    "@typescript-eslint/parser": "5.3.1",
+    "compression": "1.7.4",
+    "eslint": "8.2.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-import-resolver-typescript": "2.5.0",
+    "eslint-plugin-import": "2.25.3",
+    "express": "4.17.1",
+    "greenlock-express": "4.0.3",
+    "helmet": "4.6.0",
+    "http-proxy": "1.18.1",
+    "jsonschema": "1.4.0",
+    "le-challenge-fs": "2.0.9",
+    "le-store-certbot": "2.2.3",
+    "le-store-fs": "1.0.3",
+    "rimraf": "3.0.2",
+    "typescript": "4.4.4",
+    "ws": "8.2.3"
   },
   "devDependencies": {
-    "@josselinbuils/exec-staged": "^0.1.1",
-    "@josselinbuils/tslint": "^5.1.0",
-    "concurrently": "^5.1.0",
-    "husky": "^4.2.3",
-    "nodemon": "^2.0.2",
-    "prettier": "^2.0.2",
-    "tslint": "^6.1.0"
+    "@josselinbuils/eslint-config-typescript": "^0.3.0",
+    "@josselinbuils/exec-staged": "1.0.2",
+    "@josselinbuils/tslint": "5.1.0",
+    "concurrently": "6.4.0",
+    "husky": "7.0.4",
+    "nodemon": "2.0.15",
+    "prettier": "2.4.1",
+    "wait-on": "^6.0.0"
   },
   "prettier": {
     "singleQuote": true
+  },
+  "engines": {
+    "node": ">=16.13"
   }
 }

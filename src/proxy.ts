@@ -62,7 +62,7 @@ greenlockExpress
         )
       );
 
-    // tslint:disable-next-line:no-unused-expression
+    // eslint-disable-next-line no-new
     new WsServer({
       server: httpServer,
       verifyClient: ({ req, origin }, callback) => {

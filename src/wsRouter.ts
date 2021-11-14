@@ -2,7 +2,7 @@ import { IncomingMessage } from 'http';
 import WebSocket from 'ws';
 import { Logger } from './Logger';
 import { Redirect } from './Redirect';
-import { getRedirects, getTarget } from './utils/';
+import { getRedirects, getTarget } from './utils';
 
 export function wsRouter(hosts: {
   [host: string]: Redirect[];
