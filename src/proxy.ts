@@ -26,7 +26,12 @@ const hosts = validate(rawConfig, configSchema, { throwError: true }).instance;
 Logger.info('Starts ReverseProxy');
 
 const app = express()
-  .use(helmet({ contentSecurityPolicy: false }))
+  .use(
+    helmet({
+      contentSecurityPolicy: false,
+      crossOriginEmbedderPolicy: false,
+    })
+  )
   .use(compression())
   .use(httpRouter(hosts));
 
