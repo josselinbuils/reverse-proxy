@@ -1,11 +1,14 @@
 import { type IncomingMessage } from 'http';
 import WebSocket from 'ws';
 import { Logger } from './Logger';
-import { type Redirect } from './Redirect';
-import { getTarget } from './utils/getTarget';
+import {
+  type ExternalRedirect,
+  type InternalRedirect,
+  getTarget,
+} from './redirect';
 
 export function wsRouter(hosts: {
-  [host: string]: Redirect[];
+  [host: string]: ExternalRedirect | InternalRedirect[];
 }): (wsClient: WebSocket, req: IncomingMessage) => void {
   return (wsClient: WebSocket, req: IncomingMessage) => {
     const { headers, url } = req;
@@ -13,7 +16,8 @@ export function wsRouter(hosts: {
 
     const redirects = hosts[host];
 
-    if (!redirects) {
+    // External redirects are managed only with HTTPS protocol
+    if (!redirects || !Array.isArray(redirects)) {
       wsClient.send('Unknown host');
       return wsClient.close();
     }
@@ -22,9 +26,9 @@ export function wsRouter(hosts: {
     const request = `wss://${host}${url}`;
 
     if (target) {
-      Logger.info(`${request} -> ${target}${url}`);
+      Logger.info(`${request} -> ${target.host}${url}`);
 
-      const wsProxy = new WebSocket(`${target}${url}`);
+      const wsProxy = new WebSocket(`${target.host}${url}`);
 
       wsProxy.on('open', () => {
         wsClient.on('message', (data, isBinary) =>

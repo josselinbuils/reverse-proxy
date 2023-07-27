@@ -3,20 +3,25 @@
   "type": "object",
   "patternProperties": {
     ".*": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "path": {"type": "string"},
-          "service": {"type": "string"},
-          "httpPort": {"type": "number"},
-          "wsPort": {"type": "number"}
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": { "type": "string" },
+              "service": { "type": "string" },
+              "httpPort": { "type": "number" },
+              "wsPort": { "type": "number" }
+            },
+            "anyOf": [
+              { "required": ["path", "service", "httpPort"] },
+              { "required": ["path", "service", "wsPort"] }
+            ]
+          }
         },
-        "anyOf": [
-          {"required": ["path", "service", "httpPort"]},
-          {"required": ["path", "service", "wsPort"]}
-        ]
-      }
+        { "type": "string" }
+      ]
     }
   }
 }

@@ -2,7 +2,6 @@ import { Agent } from 'node:http';
 import { type Request, type Response } from 'express';
 import httpProxy from 'http-proxy';
 import { Logger } from './Logger';
-import { type Redirect } from './Redirect';
 import {
   ENV_DEV,
   ENV_PROD,
@@ -12,12 +11,16 @@ import {
   HTTP_STATUS_NOT_FOUND,
   HTTP_STATUS_MOVED_PERMANENTLY,
 } from './constants';
-import { getTarget } from './utils/getTarget';
+import {
+  type ExternalRedirect,
+  type InternalRedirect,
+  getTarget,
+} from './redirect';
 
 const ENV = process.env.NODE_ENV || ENV_DEV;
 
 export function httpRouter(hosts: {
-  [host: string]: Redirect[];
+  [host: string]: ExternalRedirect | InternalRedirect[];
 }): (req: Request, res: Response) => void {
   const proxy = httpProxy.createProxyServer({
     agent: new Agent({ keepAlive: true, keepAliveMsecs: KEEP_ALIVE_MS }),
@@ -31,29 +34,28 @@ export function httpRouter(hosts: {
     try {
       const { hostname, method, protocol, url } = req;
 
-      if (
-        (protocol !== 'https' && ENV === ENV_PROD) ||
-        hostname.startsWith('www.')
-      ) {
-        const newUrl = `https://${hostname.replace(/^www\./, '')}${url}`;
-        Logger.info(
-          `Redirect from ${protocol}://${hostname}${url} to ${newUrl}.`,
-        );
-        return res.redirect(HTTP_STATUS_MOVED_PERMANENTLY, newUrl);
+      if (protocol !== 'https' && ENV === ENV_PROD) {
+        redirect(req, res, `https://${hostname}${url}`);
+        return;
       }
 
       const redirects = hosts[hostname];
 
       if (!redirects) {
-        return res.status(FORBIDDEN).send('Unknown host');
+        res.status(FORBIDDEN).send('Unknown host');
+        return;
       }
 
       const target = getTarget(redirects, protocol, url);
       const request = `${protocol}://${hostname}${url}`;
 
       if (target) {
-        Logger.info(`${method} ${request} -> ${target}${url}`);
-        proxy.web(req, res, { target });
+        if (target.external) {
+          redirect(req, res, `${protocol}://${target.host}${url}`);
+        } else {
+          Logger.info(`${method} ${request} -> ${target.host}${url}`);
+          proxy.web(req, res, { target: target.host });
+        }
       } else {
         Logger.info(`No target found: ${method} ${request}.`);
         res.sendStatus(HTTP_STATUS_NOT_FOUND);
@@ -63,4 +65,10 @@ export function httpRouter(hosts: {
       res.sendStatus(HTTP_STATUS_INTERNAL_ERROR);
     }
   };
+}
+
+function redirect(req: Request, res: Response, newUrl: string) {
+  const { hostname, protocol, url } = req;
+  Logger.info(`Redirect from ${protocol}://${hostname}${url} to ${newUrl}.`);
+  return res.redirect(HTTP_STATUS_MOVED_PERMANENTLY, newUrl);
 }
