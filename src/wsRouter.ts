@@ -2,7 +2,6 @@ import { type IncomingMessage } from 'http';
 import WebSocket from 'ws';
 import { Logger } from './Logger';
 import { type Redirect } from './Redirect';
-import { getRedirects } from './utils/getRedirects';
 import { getTarget } from './utils/getTarget';
 
 export function wsRouter(hosts: {
@@ -12,7 +11,7 @@ export function wsRouter(hosts: {
     const { headers, url } = req;
     const { host } = headers;
 
-    const redirects = getRedirects(hosts, host);
+    const redirects = hosts[host];
 
     if (!redirects) {
       wsClient.send('Unknown host');

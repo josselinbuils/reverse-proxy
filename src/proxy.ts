@@ -58,7 +58,7 @@ greenlockExpress
       .httpServer(app)
       .listen(HTTP_PORT, () =>
         Logger.info(
-          `ReverseProxy is listening on port ${HTTP_PORT} for HTTP protocol`,
+          `ReverseProxy is listening on port ${HTTP_PORT} for HTTP protocol.`,
         ),
       );
 
@@ -66,7 +66,7 @@ greenlockExpress
       .httpsServer(null, app)
       .listen(HTTPS_PORT, () =>
         Logger.info(
-          `ReverseProxy is listening on port ${HTTPS_PORT} for HTTPS protocol`,
+          `ReverseProxy is listening on port ${HTTPS_PORT} for HTTPS protocol.`,
         ),
       );
 
@@ -75,12 +75,12 @@ greenlockExpress
       server: httpServer,
       verifyClient: ({ req, origin }, callback) => {
         // Allow request from localhost for dev purpose
-        if (ENV === ENV_DEV && req.headers.host.indexOf(LOCALHOST) === 0) {
+        if (ENV === ENV_DEV && req.headers.host === LOCALHOST) {
           return callback(true);
         }
 
         Logger.error(
-          `Non-secure websocket connection received from ${origin}, reject it`,
+          `Non-secure websocket connection received from ${origin}, reject it.`,
         );
         callback(false, FORBIDDEN);
       },
