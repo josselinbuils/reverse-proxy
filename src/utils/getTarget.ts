@@ -1,12 +1,12 @@
-import { Redirect } from '../Redirect';
+import { type Redirect } from '../Redirect';
 
 export function getTarget(
   redirects: Redirect[],
   protocol: string,
-  path: string
+  path: string,
 ): string {
   const redirect = redirects.find(
-    (r) => path.toLowerCase().indexOf(r.path.toLowerCase()) === 0
+    (r) => path.toLowerCase().indexOf(r.path.toLowerCase()) === 0,
   );
 
   if (redirect === undefined) {

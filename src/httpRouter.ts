@@ -1,6 +1,8 @@
-import { Request, Response } from 'express';
-import { Agent } from 'http';
+import { Agent } from 'node:http';
+import { type Request, type Response } from 'express';
 import httpProxy from 'http-proxy';
+import { Logger } from './Logger';
+import { type Redirect } from './Redirect';
 import {
   ENV_DEV,
   ENV_PROD,
@@ -9,9 +11,8 @@ import {
   KEEP_ALIVE_MS,
   NOT_FOUND,
 } from './constants';
-import { Logger } from './Logger';
-import { Redirect } from './Redirect';
-import { getRedirects, getTarget } from './utils';
+import { getRedirects } from './utils/getRedirects';
+import { getTarget } from './utils/getTarget';
 
 const ENV = process.env.NODE_ENV || ENV_DEV;
 
@@ -23,7 +24,7 @@ export function httpRouter(hosts: {
   });
 
   proxy.on('error', (error: Error) =>
-    Logger.error(`Proxy error: ${error.message}`)
+    Logger.error(`Proxy error: ${error.message}`),
   );
 
   return (req: Request, res: Response) => {
@@ -39,10 +40,10 @@ export function httpRouter(hosts: {
       if (protocol !== 'https' && ENV === ENV_PROD) {
         const newUrl = `https://${hostname}${url}`;
         Logger.info(
-          `${hostname} is a HTTPS only domain, use HTTPS instead of HTTP`
+          `${hostname} is a HTTPS only domain, use HTTPS instead of HTTP`,
         );
         Logger.info(
-          `Redirect from ${protocol}://${hostname}${url} to ${newUrl}`
+          `Redirect from ${protocol}://${hostname}${url} to ${newUrl}`,
         );
         return res.redirect(newUrl);
       }

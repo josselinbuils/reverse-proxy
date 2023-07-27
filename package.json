@@ -41,6 +41,7 @@
     "@josselinbuils/eslint-config-typescript": "0.4.1",
     "@josselinbuils/exec-staged": "1.0.2",
     "@josselinbuils/tslint": "5.1.0",
+    "@types/greenlock-express": "^4.0.0",
     "concurrently": "8.2.0",
     "husky": "8.0.3",
     "nodemon": "3.0.1",

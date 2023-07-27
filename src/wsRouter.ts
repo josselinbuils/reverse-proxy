@@ -1,8 +1,9 @@
-import { IncomingMessage } from 'http';
+import { type IncomingMessage } from 'http';
 import WebSocket from 'ws';
 import { Logger } from './Logger';
-import { Redirect } from './Redirect';
-import { getRedirects, getTarget } from './utils';
+import { type Redirect } from './Redirect';
+import { getRedirects } from './utils/getRedirects';
+import { getTarget } from './utils/getTarget';
 
 export function wsRouter(hosts: {
   [host: string]: Redirect[];
@@ -28,10 +29,10 @@ export function wsRouter(hosts: {
 
       wsProxy.on('open', () => {
         wsClient.on('message', (data, isBinary) =>
-          wsProxy.send(isBinary ? data : data.toString())
+          wsProxy.send(isBinary ? data : data.toString()),
         );
         wsProxy.on('message', (data, isBinary) =>
-          wsClient.send(isBinary ? data : data.toString())
+          wsClient.send(isBinary ? data : data.toString()),
         );
       });
 

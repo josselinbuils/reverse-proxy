@@ -285,6 +285,11 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
+"@types/greenlock-express@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@types/greenlock-express/-/greenlock-express-4.0.0.tgz#199c9b540c6aaf1045ea5d046f67d422fe810188"
+  integrity sha512-vaMz2a1DyZpnI2mV/oXWjpf0xdEYt7GBW6nmVp0EfRosHV0lw4V+9gMr0Idj+IEuJCLSC54ceO017VXIu9EwaQ==
+
 "@types/http-errors@*":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/http-errors/-/http-errors-2.0.1.tgz#20172f9578b225f6c7da63446f56d4ce108d5a65"
