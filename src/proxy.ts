@@ -28,7 +28,11 @@ Logger.info('Starts ReverseProxy');
 const app = express()
   .use(
     helmet({
-      contentSecurityPolicy: false,
+      contentSecurityPolicy: {
+        directives: {
+          'frame-ancestors': ["'self'", 'localhost'],
+        },
+      },
       crossOriginEmbedderPolicy: false,
     }),
   )
