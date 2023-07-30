@@ -4,7 +4,7 @@ COPY . reverse-proxy
 
 WORKDIR reverse-proxy
 
-RUN yarn install --production --frozen-lockfile && \
+RUN yarn install --emoji --frozen-lockfile --no-progress && \
     yarn build
 
 CMD ["yarn", "start"]
