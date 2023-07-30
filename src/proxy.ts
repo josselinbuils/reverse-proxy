@@ -28,14 +28,9 @@ Logger.info('Starts ReverseProxy');
 const app = express()
   .use(
     helmet({
-      contentSecurityPolicy: {
-        directives: {
-          'default-src': ["'self'", 'localhost:*'],
-          'frame-ancestors': ["'self'", 'localhost:*'],
-        },
-        useDefaults: false,
-      },
+      contentSecurityPolicy: false,
       crossOriginEmbedderPolicy: false,
+      xFrameOptions: false,
     }),
   )
   .use(compression())
