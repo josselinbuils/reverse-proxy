@@ -30,8 +30,9 @@ const app = express()
     helmet({
       contentSecurityPolicy: {
         directives: {
-          'frame-ancestors': ["'self'", 'localhost'],
+          'frame-ancestors': ["'self'", 'localhost:*'],
         },
+        useDefaults: false,
       },
       crossOriginEmbedderPolicy: false,
     }),
