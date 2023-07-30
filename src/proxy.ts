@@ -30,6 +30,7 @@ const app = express()
     helmet({
       contentSecurityPolicy: {
         directives: {
+          'default-src': ["'self'", 'localhost:*'],
           'frame-ancestors': ["'self'", 'localhost:*'],
         },
         useDefaults: false,
