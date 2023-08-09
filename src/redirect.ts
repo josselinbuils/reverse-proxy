@@ -20,7 +20,8 @@ export function getTarget(
   }
 
   const redirect = hostConfig.find(
-    (r) => path.toLowerCase().indexOf(r.path.toLowerCase()) === 0,
+    (r) =>
+      r.path === '*' || path.toLowerCase().startsWith(r.path.toLowerCase()),
   );
 
   if (redirect === undefined) {
